@@ -1,53 +1,55 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Registration</title>
+    <title>Регистрация в SELLIX</title>
 </head>
 <body>
-    <h1>SELLIX</h1>
-    <hr>
-    <h2>REGISTRATION</h2>
+<h1>SELLIX</h1>
+<h2>Регистрация</h2>
 
-    <form th:action="@{/users}" method="post" th:object="${userDto}" enctype="multipart/form-data">
-        <label for="username">Введите имя пользователя:
-            <input id="username" type="email" th:field="*{username}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
-            username error
+<form th:action="@{/users}" th:method="post" th:object="${userDto}" enctype="multipart/form-data">
+    <div>
+        <label for="username">Имя пользователя:</label>
+        <input id="username" type="email" th:field="*{username}" required>
+        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+            Ошибка имени пользователя
         </div>
-        <br><br>
-        <label for="firstName">Введите имя:
-            <input id="firstName" type="text" th:field="*{firstName}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
-            firstName error
+    </div>
+    <div>
+        <label for="firstName">Имя:</label>
+        <input id="firstName" type="text" th:field="*{firstName}" required>
+        <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
+            Ошибка имени
         </div>
-        <br><br>
-        <label for="lastName">Введите фамилию:
-            <input id="lastName" type="text" th:field="*{lastName}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
-            lastName error
+    </div>
+    <div>
+        <label for="lastName">Фамилия:</label>
+        <input id="lastName" type="text" th:field="*{lastName}" required>
+        <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
+            Ошибка фамилии
         </div>
-        <br><br>
-        <label for="password">Введите пароль:
-            <input id="password" type="password" th:field="*{password}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
-            password error
+    </div>
+    <div>
+        <label for="password">Пароль:</label>
+        <input id="password" type="password" th:field="*{password}" required>
+        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+            Ошибка пароля
         </div>
-        <br><br>
-        <label for="phoneNumber">Введите номер телефона:
-            <input id="phoneNumber" type="text" th:field="*{phoneNumber}">
-        </label>
-        <br><br>
-        <label for="avatar">Установите аватарку:
-            <input id="avatar" type="file" th:field="*{avatar}">
-        </label>
-        <br><br>
-
+    </div>
+    <div>
+        <label for="phoneNumber">Номер телефона:</label>
+        <input id="phoneNumber" type="text" th:field="*{phoneNumber}">
+    </div>
+    <div>
+        <label for="avatar">Аватар:</label>
+        <input id="avatar" type="file" th:field="*{avatar}">
+    </div>
+    <div>
         <input type="submit" value="Зарегистрироваться">
-    </form>
+    </div>
+</form>
+
+<p><a th:href="@{/login}">Войти</a></p>
 </body>
 </html>

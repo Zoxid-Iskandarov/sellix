@@ -1,89 +1,70 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Announcements</title>
+    <title>Главная страница SELLIX</title>
 </head>
 <body>
 <h1>SELLIX</h1>
 
 <div sec:authorize="isAuthenticated()">
-    <a th:href="'/users/' + ${#authentication.principal.id}" class="profile-link">
-        Профиль (<span th:text="${#authentication.principal.username}"></span>)
-    </a>
+    <p>
+        <a th:href="@{/users/{id}(id=${#authentication.principal.id})}">
+            Профиль (<span th:text="${#authentication.principal.username}">Не указано</span>)
+        </a>
+    </p>
     <div th:insert="~{fragment :: logout}"></div>
 </div>
 <div sec:authorize="!isAuthenticated()">
-    <a th:href="@{/login}" class="profile-link">Профиль</a>
+    <p><a th:href="@{/login}">Войти</a></p>
 </div>
 
-<a href="/announcements/create">Подать объявление</a>
-<hr><br>
+<p><a th:href="@{/announcements/create}">Подать объявление</a></p>
 
-<form action="/announcements" th:object="${filter}">
-    <label for="search">Что ищете?
-        <input id="search" type="text" name="title" th:value="*{title()}">
-    </label>
-    <select name="city" class="form-select" th:field="*{city}">
-        <option value="">Вся страна</option>
-        <option th:each="cityOpt : ${cities}"
-                th:value="${cityOpt}"
-                th:text="${cityOpt}"
-                th:selected="${cityOpt == filter.city()}">
-        </option>
-    </select>
-    <input type="submit" value="Поиск">
-    <br>
-    <h4>Фильтры</h4>
-    Цена<br><br>
-
-    <label for="minPrice">от:
-        <input id="minPrice" type="number" name="minPrice" th:value="*{minPrice()}">
-    </label>
-    <label for="maxPrice">до:
-        <input id="maxPrice" type="number" name="maxPrice" th:value="*{maxPrice()}">
-    </label>
+<form th:action="@{/announcements}" th:method="get" th:object="${filter}">
+    <div>
+        <label for="search">Что ищете?</label>
+        <input id="search" type="text" th:field="*{title}">
+    </div>
+    <div>
+        <label for="city">Город:</label>
+        <select id="city" th:field="*{city}">
+            <option value="">Вся страна</option>
+            <option th:each="cityOpt : ${cities}" th:value="${cityOpt}" th:text="${cityOpt}" th:selected="${cityOpt == filter.city}"></option>
+        </select>
+    </div>
+    <div>
+        <label for="minPrice">Цена от:</label>
+        <input id="minPrice" type="number" th:field="*{minPrice}">
+    </div>
+    <div>
+        <label for="maxPrice">Цена до:</label>
+        <input id="maxPrice" type="number" th:field="*{maxPrice}">
+    </div>
+    <div>
+        <input type="submit" value="Поиск">
+    </div>
 </form>
-<br><br>
 
 <div th:each="announcementDto : ${announcementPage.getContent()}">
-
-    <img th:src="@{/announcements/{id}/preview(id=${announcementDto.id})}"
-         width="100" height="100" alt="image">
-
-    <h4>
-        <span th:text="${announcementDto.title}">Text</span>
-        <a th:href="@{/announcements/{id}(id=${announcementDto.id})}">Подробнее...</a>
-        <br>
-        <span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'">text</span>
-        <br>
-        <span th:text="${announcementDto.city}">text</span>
-        <span th:text="${announcementDto.createdAt}">text</span>
-    </h4>
+    <div>
+        <img th:src="@{/announcements/{id}/preview(id=${announcementDto.id})}" alt="Превью объявления">
+        <h4>
+            <span th:text="${announcementDto.title} ?: 'Не указано'">Не указано</span>
+            <a th:href="@{/announcements/{id}(id=${announcementDto.id})}">Подробнее</a>
+        </h4>
+        <p><span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'">Не указано</span></p>
+        <p><span th:text="${announcementDto.city} ?: 'Не указано'">Не указано</span></p>
+        <p><span th:text="${announcementDto.createdAt} ?: 'Не указано'">Не указано</span></p>
+    </div>
 </div>
 
-<div th:if="${announcementPage.totalPages > 1}" class="pagination">
-    <th:block th:if="${announcementPage.number == 0}">
-        <span th:text="${announcementPage.number + 1}" class="current-page"></span>
-        <a th:if="${announcementPage.hasNext()}"
-           th:href="@{/announcements(page=${announcementPage.number + 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}"
-           class="page-link">Следующий</a>
-    </th:block>
-
-    <th:block th:if="${announcementPage.number > 0 and announcementPage.number < announcementPage.totalPages - 1}">
-        <a th:href="@{/announcements(page=${announcementPage.number - 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}"
-           class="page-link">Предыдущий</a>
-        <span th:text="${announcementPage.number + 1}" class="current-page"></span>
-        <a th:href="@{/announcements(page=${announcementPage.number + 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}"
-           class="page-link">Следующий</a>
-    </th:block>
-
-    <th:block th:if="${announcementPage.number == announcementPage.totalPages - 1}">
-        <a th:href="@{/announcements(page=${announcementPage.number - 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}"
-           class="page-link">Предыдущий</a>
-        <span th:text="${announcementPage.number + 1}" class="current-page"></span>
-    </th:block>
+<div th:if="${announcementPage.totalPages > 1}">
+    <div>
+        <a th:if="${announcementPage.hasPrevious()}" th:href="@{/announcements(page=${announcementPage.number - 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">Предыдущая</a>
+        <span th:text="${announcementPage.number + 1}">1</span>
+        <a th:if="${announcementPage.hasNext()}" th:href="@{/announcements(page=${announcementPage.number + 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">Следующая</a>
+    </div>
 </div>
 </body>
 </html>

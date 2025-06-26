@@ -1,28 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>USERS</title>
+    <title>Профиль пользователя SELLIX</title>
 </head>
 <body>
-    <h1>SELLIX</h1>
-    <hr>
-    <h2>USER</h2>
+<h1>SELLIX</h1>
+<h2>Профиль пользователя</h2>
 
-    <p th:text="${user.username}">user</p>
-    <p th:text="${user.firstName}">user</p>
-    <p th:text="${user.lastName}">user</p>
-    <p th:text="${user.phoneNumber}">user</p>
+<div>
+    <p><strong>Имя пользователя:</strong> <span th:text="${user.username} ?: 'Не указано'">Не указано</span></p>
+    <p><strong>Имя:</strong> <span th:text="${user.firstName} ?: 'Не указано'">Не указано</span></p>
+    <p><strong>Фамилия:</strong> <span th:text="${user.lastName} ?: 'Не указано'">Не указано</span></p>
+    <p><strong>Номер телефона:</strong> <span th:text="${user.phoneNumber} ?: 'Не указано'">Не указано</span></p>
+</div>
 
-    <div th:if="${user.avatar}">
-        <img th:src="@{/users/{id}/avatar(id=${user.id})}" width="100" height="100" alt="avatar">
-    </div>
+<div th:if="${user.avatar}">
+    <img th:src="@{/users/{id}/avatar(id=${user.id})}" alt="Аватар пользователя">
+</div>
 
-    <div sec:authorize="hasAuthority('ADMIN')">
-        <a th:href="@{/admin}">Панель администратора</a>
-    </div>
-    <a th:href="@{/users/{id}/edit(id=${user.id})}">Редактировать профиль</a><br>
-    <a th:href="@{/announcements/user/{id}(id=${user.id})}">Мои объявления</a>
+<div sec:authorize="hasAuthority('ADMIN')">
+    <p><a th:href="@{/admin}">Панель администратора</a></p>
+</div>
+
+<div>
+    <p><a th:href="@{/users/{id}/edit(id=${user.id})}">Редактировать профиль</a></p>
+    <p><a th:href="@{/announcements/user/{id}(id=${user.id})}">Мои объявления</a></p>
+</div>
 </body>
 </html>

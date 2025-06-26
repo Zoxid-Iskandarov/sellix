@@ -1,60 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>CREATE</title>
+    <title>Создание объявления SELLIX</title>
 </head>
 <body>
-    <h1>SELLIX</h1>
-    <hr>
-    <h2>CREATE ANNOUNCEMENT</h2>
+<h1>SELLIX</h1>
+<h2>Создать объявление</h2>
 
-    <form th:action="@{/announcements}" th:method="post" th:object="${announcementRequest}" enctype="multipart/form-data">
-        <label for="title">Введите заголовок:
-            <input id="title" type="text" name="title" th:field="*{title}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
-            title error
+<form th:action="@{/announcements}" th:method="post" th:object="${announcementRequest}" enctype="multipart/form-data">
+    <div>
+        <label for="title">Заголовок:</label>
+        <input id="title" type="text" th:field="*{title}" required>
+        <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+            Ошибка заголовка
         </div>
-        <br><br>
-        <label for="description">Введите описание:
-            <input id="description" type="text" name="description" th:field="*{description}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
-            description error
+    </div>
+    <div>
+        <label for="description">Описание:</label>
+        <input id="description" type="text" th:field="*{description}" required>
+        <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+            Ошибка описания
         </div>
-        <br><br>
-        <label for="price">Введите цену:
-            <input id="price" type="number" name="price" th:field="*{price}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">
-            price error
+    </div>
+    <div>
+        <label for="price">Цена:</label>
+        <input id="price" type="number" th:field="*{price}" required>
+        <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}">
+            Ошибка цены
         </div>
-        <br><br>
-        <label for="city">Введите город:
-            <select id="city" name="city" th:field="*{city}">
-                <option value="">Вся страна</option>
-                <option th:each="cityOpt : ${cities}"
-                        th:value="${cityOpt}"
-                        th:text="${cityOpt}">
-                </option>
-            </select>
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('city')}" th:errors="*{city}">
-            city error
+    </div>
+    <div>
+        <label for="city">Город:</label>
+        <select id="city" th:field="*{city}">
+            <option value="">Вся страна</option>
+            <option th:each="cityOpt : ${cities}" th:value="${cityOpt}" th:text="${cityOpt}"></option>
+        </select>
+        <div th:if="${#fields.hasErrors('city')}" th:errors="*{city}">
+            Ошибка города
         </div>
-        <br><br>
-        <label for="image1">
-            <input id="image1" type="file" name="image1" required>
-        </label><br><br>
-        <label for="image2">
-            <input id="image2" type="file" name="image2">
-        </label><br><br>
-        <label for="image3">
-            <input id="image3" type="file" name="image3">
-        </label><br><br>
-
+    </div>
+    <div>
+        <label for="image1">Изображение 1:</label>
+        <input id="image1" type="file" th:field="*{image1}" required>
+    </div>
+    <div>
+        <label for="image2">Изображение 2:</label>
+        <input id="image2" type="file" th:field="*{image2}">
+    </div>
+    <div>
+        <label for="image3">Изображение 3:</label>
+        <input id="image3" type="file" th:field="*{image3}">
+    </div>
+    <div>
         <input type="submit" value="Опубликовать">
-    </form>
+    </div>
+</form>
 </body>
 </html>

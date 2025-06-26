@@ -1,40 +1,43 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Update</title>
+    <title>Редактирование профиля SELLIX</title>
 </head>
 <body>
-    <h1>SELLIX</h1>
-    <hr>
-    <h2>UPDATE</h2>
+<h1>SELLIX</h1>
+<h2>Редактировать профиль</h2>
 
-    <form th:action="@{/users/{id}(id=${userDto.id})}" th:method="patch" th:object="${userDto}" enctype="multipart/form-data">
-        <label for="firstName">Введите имя:
-            <input id="firstName" type="text" name="firstName" th:field="*{firstName}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
-            firstName error
+<form th:action="@{/users/{id}(id=${userDto.id})}" th:method="post" th:object="${userDto}" enctype="multipart/form-data">
+    <input type="hidden" name="_method" value="patch">
+    <div>
+        <label for="firstName">Имя:</label>
+        <input id="firstName" type="text" th:field="*{firstName}" required>
+        <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
+            Ошибка имени
         </div>
-        <br><br>
-        <label for="lastName">Введите фамилию:
-            <input id="lastName" type="text" name="lastName" th:field="*{lastName}">
-        </label>
-        <div style="color: red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
-            lastName error
+    </div>
+    <div>
+        <label for="lastName">Фамилия:</label>
+        <input id="lastName" type="text" th:field="*{lastName}" required>
+        <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
+            Ошибка фамилии
         </div>
-        <br><br>
-        <label for="phoneNumber">Введите номер телефона:
-            <input id="phoneNumber" type="text" name="phoneNumber" th:field="*{phoneNumber}">
-        </label><br><br>
-        <div th:if="${avatar}">
-            <img th:src="@{/users/{id}/avatar(id=${userDto.id})}" width="100" height="100" alt="avatar">
-        </div><br><br>
-        <label for="avatar">Установите аватарку:
-            <input id="avatar" type="file" name="avatar">
-        </label><br><br>
-
+    </div>
+    <div>
+        <label for="phoneNumber">Номер телефона:</label>
+        <input id="phoneNumber" type="text" th:field="*{phoneNumber}">
+    </div>
+    <div th:if="${userDto.avatar}">
+        <img th:src="@{/users/{id}/avatar(id=${userDto.id})}" alt="Аватар пользователя">
+    </div>
+    <div>
+        <label for="avatar">Аватар:</label>
+        <input id="avatar" type="file" th:field="*{avatar}">
+    </div>
+    <div>
         <input type="submit" value="Обновить">
-    </form>
+    </div>
+</form>
 </body>
 </html>

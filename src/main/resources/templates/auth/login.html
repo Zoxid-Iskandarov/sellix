@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Вход в SELLIX</title>
 </head>
 <body>
-    <h1>SELLIX</h1>
-    <hr>
-    <h2>LOGIN</h2>
+<h1>SELLIX</h1>
+<h2>Вход</h2>
 
-    <form th:action="@{/login}" method="post">
-        <label for="username">Введите имя пользователя:
-            <input id="username" type="email" name="username">
-        </label><br><br>
-        <label for="password">Введите пароль:
-            <input id="password" type="password" name="password">
-        </label><br><br>
-
+<form th:action="@{/login}" th:method="post">
+    <div>
+        <label for="username">Имя пользователя:</label>
+        <input id="username" type="email" name="username" required>
+    </div>
+    <div>
+        <label for="password">Пароль:</label>
+        <input id="password" type="password" name="password" required>
+    </div>
+    <div>
         <input type="submit" value="Войти">
-    </form>
+    </div>
+</form>
 
-    <a href="/registration">Зарегистрироваться</a>
+<p><a th:href="@{/registration}">Зарегистрироваться</a></p>
 </body>
 </html>
