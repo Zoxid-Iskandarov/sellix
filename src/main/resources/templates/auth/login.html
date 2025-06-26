@@ -2,26 +2,116 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Вход в SELLIX</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .login-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-floating label {
+            padding: 0.8rem 1rem;
+        }
+        .btn-login {
+            padding: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .divider-text {
+            padding: 0 10px;
+            color: #6c757d;
+        }
+    </style>
 </head>
-<body>
-<h1>SELLIX</h1>
-<h2>Вход</h2>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Логотип и заголовок -->
+            <div class="text-center mb-5">
+                <h1 class="text-primary">
+                    <i class="bi bi-shop"></i> SELLIX
+                </h1>
+                <h2 class="h4">Вход в аккаунт</h2>
+            </div>
 
-<form th:action="@{/login}" th:method="post">
-    <div>
-        <label for="username">Имя пользователя:</label>
-        <input id="username" type="email" name="username" required>
-    </div>
-    <div>
-        <label for="password">Пароль:</label>
-        <input id="password" type="password" name="password" required>
-    </div>
-    <div>
-        <input type="submit" value="Войти">
-    </div>
-</form>
+            <!-- Контейнер формы -->
+            <div class="login-container">
+                <!-- Сообщение об ошибке -->
+                <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Неверное имя пользователя или пароль
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
 
-<p><a th:href="@{/registration}">Зарегистрироваться</a></p>
+                <!-- Форма входа -->
+                <form th:action="@{/login}" th:method="post">
+                    <!-- Поле email -->
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="username" name="username"
+                               placeholder="name@example.com" required>
+                        <label for="username">
+                            <i class="bi bi-envelope"></i> Email
+                        </label>
+                    </div>
+
+                    <!-- Поле пароля -->
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Пароль" required>
+                        <label for="password">
+                            <i class="bi bi-lock"></i> Пароль
+                        </label>
+                    </div>
+
+                    <!-- Запомнить меня -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
+                        <label class="form-check-label" for="remember-me">Запомнить меня</label>
+                    </div>
+
+                    <!-- Кнопка входа -->
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-login">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти
+                        </button>
+                    </div>
+
+                    <!-- Разделитель -->
+                    <div class="divider">
+                        <span class="divider-text">или</span>
+                    </div>
+
+                    <!-- Ссылка на регистрацию -->
+                    <div class="text-center">
+                        <p class="mb-1">Ещё нет аккаунта?</p>
+                        <a th:href="@{/registration}" class="btn btn-outline-primary">
+                            <i class="bi bi-person-plus"></i> Зарегистрироваться
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

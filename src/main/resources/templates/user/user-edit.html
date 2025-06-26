@@ -2,42 +2,184 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Редактирование профиля SELLIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Редактирование профиля — SELLIX</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .profile-edit-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .avatar-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid #f8f9fa;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .avatar-upload {
+            position: relative;
+            display: inline-block;
+        }
+        .avatar-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .form-floating label {
+            padding: 0.8rem 1rem;
+        }
+        .avatar-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            background-color: #6c757d;
+        }
+    </style>
 </head>
-<body>
-<h1>SELLIX</h1>
-<h2>Редактировать профиль</h2>
+<body class="bg-light">
+<!-- Шапка -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/announcements">
+            <i class="bi bi-shop"></i> SELLIX
+        </a>
+        <div class="ms-auto">
+            <a th:href="@{/users/{id}(id=${userDto.id})}" class="btn btn-outline-light">
+                <i class="bi bi-arrow-left"></i> Назад к профилю
+            </a>
+        </div>
+    </div>
+</nav>
 
-<form th:action="@{/users/{id}(id=${userDto.id})}" th:method="post" th:object="${userDto}" enctype="multipart/form-data">
-    <input type="hidden" name="_method" value="patch">
-    <div>
-        <label for="firstName">Имя:</label>
-        <input id="firstName" type="text" th:field="*{firstName}" required>
-        <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
-            Ошибка имени
-        </div>
+<!-- Основной контент -->
+<div class="container mb-5">
+    <div class="profile-edit-container">
+        <h2 class="mb-4 text-center"><i class="bi bi-pencil-square"></i> Редактировать профиль</h2>
+
+        <!-- Форма редактирования -->
+        <form th:action="@{/users/{id}(id=${userDto.id})}" th:method="post" th:object="${userDto}" enctype="multipart/form-data">
+            <input type="hidden" name="_method" value="patch">
+
+            <!-- Аватар -->
+            <div class="text-center mb-4">
+                <div class="avatar-upload d-inline-block">
+                    <div th:if="${userDto.avatar != null}">
+                        <img th:src="@{/users/{id}/avatar(id=${userDto.id})}"
+                             class="avatar-preview mb-2"
+                             id="avatarPreview"
+                             alt="Аватар пользователя">
+                    </div>
+                    <div th:unless="${userDto.avatar != null}" id="avatarPlaceholder"
+                         class="avatar-preview mb-2 avatar-placeholder">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <label class="btn btn-outline-primary mt-2">
+                        <i class="bi bi-camera"></i> Изменить аватар
+                        <input id="avatar" type="file" th:field="*{avatar}"
+                               class="avatar-upload-input"
+                               accept="image/*"
+                               onchange="previewAvatar(this)">
+                    </label>
+                    <div class="form-text">Рекомендуемый размер: 300x300 px</div>
+                </div>
+            </div>
+
+            <!-- Имя и фамилия -->
+            <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="firstName" th:field="*{firstName}"
+                               placeholder="Иван" required>
+                        <label for="firstName"><i class="bi bi-person"></i> Имя *</label>
+                        <div th:if="${#fields.hasErrors('firstName')}" class="invalid-feedback d-block" th:errors="*{firstName}">
+                            Ошибка имени
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="lastName" th:field="*{lastName}"
+                               placeholder="Иванов" required>
+                        <label for="lastName"><i class="bi bi-person"></i> Фамилия *</label>
+                        <div th:if="${#fields.hasErrors('lastName')}" class="invalid-feedback d-block" th:errors="*{lastName}">
+                            Ошибка фамилии
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Телефон -->
+            <div class="mb-4">
+                <div class="form-floating">
+                    <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}"
+                           placeholder="+998901234567">
+                    <label for="phoneNumber"><i class="bi bi-telephone"></i> Номер телефона</label>
+                </div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Сохранить изменения
+                </button>
+                <a th:href="@{/users/{id}(id=${userDto.id})}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Отменить
+                </a>
+            </div>
+        </form>
     </div>
-    <div>
-        <label for="lastName">Фамилия:</label>
-        <input id="lastName" type="text" th:field="*{lastName}" required>
-        <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
-            Ошибка фамилии
-        </div>
+</div>
+
+<!-- Подвал -->
+<footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+        <p>© 2025 SELLIX. Все права защищены.</p>
     </div>
-    <div>
-        <label for="phoneNumber">Номер телефона:</label>
-        <input id="phoneNumber" type="text" th:field="*{phoneNumber}">
-    </div>
-    <div th:if="${userDto.avatar}">
-        <img th:src="@{/users/{id}/avatar(id=${userDto.id})}" alt="Аватар пользователя">
-    </div>
-    <div>
-        <label for="avatar">Аватар:</label>
-        <input id="avatar" type="file" th:field="*{avatar}">
-    </div>
-    <div>
-        <input type="submit" value="Обновить">
-    </div>
-</form>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Скрипт для предпросмотра аватара -->
+<script>
+    function previewAvatar(input) {
+        let preview = document.getElementById('avatarPreview');
+        const placeholder = document.getElementById('avatarPlaceholder');
+
+        if (!preview && placeholder) {
+            preview = document.createElement('img');
+            preview.id = 'avatarPreview';
+            preview.className = 'avatar-preview mb-2';
+            preview.alt = 'Новый аватар';
+            placeholder.parentNode.insertBefore(preview, placeholder);
+            placeholder.remove();
+        }
+
+        const file = input.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 </body>
 </html>

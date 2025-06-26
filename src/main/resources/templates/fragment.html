@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Fragments</title>
+    <title>Фрагменты</title>
 </head>
 <body>
+
+<!-- Кнопка выхода -->
 <div th:fragment="logout">
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Выйти</button>
+    <form th:action="@{/logout}" method="post" class="d-inline">
+        <button type="submit" class="btn btn-outline-light">
+            <i class="bi bi-box-arrow-right"></i> Выйти
+        </button>
     </form>
 </div>
+
 </body>
 </html>

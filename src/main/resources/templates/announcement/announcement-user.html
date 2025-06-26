@@ -2,25 +2,92 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Объявления SELLIX</title>
-</head>
-<body>
-<h1>SELLIX</h1>
-<h2>Объявления</h2>
+    <title>Объявления | SELLIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<div th:if="${!announcementDtos.isEmpty()}">
-    <div th:each="announcementDto : ${announcementDtos}">
-        <div>
-            <img th:src="@{/announcements/{id}/preview(id=${announcementDto.id})}" alt="Превью объявления">
-            <h4>
-                <span th:text="${announcementDto.title} + ' ' + ${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'">Не указано</span>
-                <a th:href="@{/announcements/{id}(id=${announcementDto.id})}">Подробнее</a>
-            </h4>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        .announcement-card {
+            transition: transform 0.2s;
+        }
+        .announcement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .announcement-img {
+            height: 180px;
+            object-fit: cover;
+        }
+        .empty-state {
+            min-height: 300px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<!-- Шапка -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/announcements">
+            <i class="bi bi-shop"></i> SELLIX
+        </a>
+        <div class="ms-auto">
+            <a th:href="@{/announcements/create}" class="btn btn-warning me-2">
+                <i class="bi bi-plus-circle"></i> Подать объявление
+            </a>
+            <a th:href="@{/login}" class="btn btn-outline-light">
+                <i class="bi bi-box-arrow-in-right"></i> Войти
+            </a>
         </div>
     </div>
+</nav>
+
+<!-- Основной контент -->
+<div class="container">
+    <h2 class="mb-4 text-secondary">Объявления</h2>
+
+    <div th:if="${!announcementDtos.isEmpty()}" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div th:each="announcementDto : ${announcementDtos}" class="col">
+            <div class="card h-100 announcement-card">
+                <img th:src="@{/announcements/{id}/preview(id=${announcementDto.id})}"
+                     class="card-img-top announcement-img"
+                     alt="Превью объявления">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${announcementDto.title}">Заголовок</h5>
+                    <p class="fw-bold text-primary fs-5">
+                        <span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'">Цена</span>
+                    </p>
+                    <a th:href="@{/announcements/{id}(id=${announcementDto.id})}"
+                       class="btn btn-sm btn-outline-primary">
+                        Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${announcementDtos.isEmpty()}" class="empty-state text-center py-5">
+        <i class="bi bi-box-seam display-1 text-muted mb-4"></i>
+        <h3 class="text-muted">Объявлений пока нет</h3>
+        <p class="text-muted">Будьте первым, кто разместит объявление</p>
+        <a th:href="@{/announcements/create}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle"></i> Создать объявление
+        </a>
+    </div>
 </div>
-<div th:if="${announcementDtos.isEmpty()}">
-    <h3>Объявлений пока нет</h3>
-</div>
+
+<!-- Подвал -->
+<footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+        <p>© 2025 SELLIX. Все права защищены.</p>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

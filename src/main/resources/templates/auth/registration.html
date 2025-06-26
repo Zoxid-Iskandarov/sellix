@@ -2,54 +2,213 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Регистрация в SELLIX</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .registration-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #dee2e6;
+            display: none;
+            margin-top: 10px;
+        }
+        .password-strength {
+            height: 5px;
+            margin-top: 5px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .form-floating label {
+            padding: 0.8rem 1rem;
+        }
+    </style>
 </head>
-<body>
-<h1>SELLIX</h1>
-<h2>Регистрация</h2>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <!-- Логотип и заголовок -->
+            <div class="text-center mb-5">
+                <h1 class="text-primary">
+                    <i class="bi bi-shop"></i> SELLIX
+                </h1>
+                <h2 class="h3">Создайте новый аккаунт</h2>
+            </div>
 
-<form th:action="@{/users}" th:method="post" th:object="${userDto}" enctype="multipart/form-data">
-    <div>
-        <label for="username">Имя пользователя:</label>
-        <input id="username" type="email" th:field="*{username}" required>
-        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
-            Ошибка имени пользователя
-        </div>
-    </div>
-    <div>
-        <label for="firstName">Имя:</label>
-        <input id="firstName" type="text" th:field="*{firstName}" required>
-        <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
-            Ошибка имени
-        </div>
-    </div>
-    <div>
-        <label for="lastName">Фамилия:</label>
-        <input id="lastName" type="text" th:field="*{lastName}" required>
-        <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
-            Ошибка фамилии
-        </div>
-    </div>
-    <div>
-        <label for="password">Пароль:</label>
-        <input id="password" type="password" th:field="*{password}" required>
-        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
-            Ошибка пароля
-        </div>
-    </div>
-    <div>
-        <label for="phoneNumber">Номер телефона:</label>
-        <input id="phoneNumber" type="text" th:field="*{phoneNumber}">
-    </div>
-    <div>
-        <label for="avatar">Аватар:</label>
-        <input id="avatar" type="file" th:field="*{avatar}">
-    </div>
-    <div>
-        <input type="submit" value="Зарегистрироваться">
-    </div>
-</form>
+            <!-- Контейнер формы -->
+            <div class="registration-container">
+                <form th:action="@{/users}" th:method="post" th:object="${userDto}" enctype="multipart/form-data">
+                    <!-- Блок с аватаром -->
+                    <div class="text-center mb-4">
+                        <div class="position-relative d-inline-block">
+                            <img id="avatarPreview" class="avatar-preview" alt="Превью аватара">
+                            <div class="mt-3">
+                                <label for="avatar" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-camera"></i> Загрузить аватар
+                                </label>
+                                <input id="avatar" type="file" th:field="*{avatar}"
+                                       class="d-none" accept="image/*" onchange="previewAvatar(this)">
+                            </div>
+                        </div>
+                    </div>
 
-<p><a th:href="@{/login}">Войти</a></p>
+                    <!-- Имя и фамилия -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="firstName" th:field="*{firstName}"
+                                       placeholder="Иван" required>
+                                <label for="firstName">
+                                    <i class="bi bi-person"></i> Имя *
+                                </label>
+                                <div th:if="${#fields.hasErrors('firstName')}" class="invalid-feedback d-block" th:errors="*{firstName}">
+                                    Ошибка имени
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lastName" th:field="*{lastName}"
+                                       placeholder="Иванов" required>
+                                <label for="lastName">
+                                    <i class="bi bi-person"></i> Фамилия *
+                                </label>
+                                <div th:if="${#fields.hasErrors('lastName')}" class="invalid-feedback d-block" th:errors="*{lastName}">
+                                    Ошибка фамилии
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="username" th:field="*{username}"
+                                   placeholder="name@example.com" required>
+                            <label for="username">
+                                <i class="bi bi-envelope"></i> Email *
+                            </label>
+                            <div th:if="${#fields.hasErrors('username')}" class="invalid-feedback d-block" th:errors="*{username}">
+                                Ошибка email
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Телефон -->
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}"
+                                   placeholder="+998901234567">
+                            <label for="phoneNumber">
+                                <i class="bi bi-telephone"></i> Номер телефона
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Пароль -->
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="password" th:field="*{password}"
+                                   placeholder="Пароль" required oninput="checkPasswordStrength(this.value)">
+                            <label for="password">
+                                <i class="bi bi-lock"></i> Пароль *
+                            </label>
+                            <div class="password-strength">
+                                <div id="passwordStrengthBar" class="password-strength-bar"></div>
+                            </div>
+                            <small class="text-muted">Минимум 8 символов, включая цифры и буквы</small>
+                            <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback d-block" th:errors="*{password}">
+                                Ошибка пароля
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопка регистрации -->
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-person-plus"></i> Зарегистрироваться
+                        </button>
+                    </div>
+
+                    <!-- Ссылка на вход -->
+                    <div class="text-center">
+                        <p>Уже есть аккаунт? <a th:href="@{/login}">Войти</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Скрипты для превью аватара и проверки пароля -->
+<script>
+    // Превью аватара
+    function previewAvatar(input) {
+        const preview = document.getElementById('avatarPreview');
+        const file = input.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    }
+
+    // Проверка сложности пароля
+    function checkPasswordStrength(password) {
+        const strengthBar = document.getElementById('passwordStrengthBar');
+        let strength = 0;
+
+        if (password.length >= 8) strength += 1;
+        if (password.match(/[a-zа-я]/)) strength += 1;
+        if (password.match(/[A-ZА-Я]/)) strength += 1;
+        if (password.match(/[0-9]/)) strength += 1;
+        if (password.match(/[^a-zA-Z0-9а-яА-Я]/)) strength += 1;
+
+        // Обновляем индикатор
+        const width = strength * 20;
+        strengthBar.style.width = width + '%';
+
+        // Меняем цвет в зависимости от сложности
+        if (width <= 40) {
+            strengthBar.style.backgroundColor = '#dc3545'; // Красный
+        } else if (width <= 70) {
+            strengthBar.style.backgroundColor = '#fd7e14'; // Оранжевый
+        } else {
+            strengthBar.style.backgroundColor = '#28a745'; // Зеленый
+        }
+    }
+</script>
 </body>
 </html>

@@ -2,59 +2,183 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Создание объявления SELLIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Создание объявления — SELLIX</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .preview-image {
+            max-height: 150px;
+            max-width: 100%;
+            margin-top: 10px;
+            display: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
-<body>
-<h1>SELLIX</h1>
-<h2>Создать объявление</h2>
+<body class="bg-light">
+<!-- Шапка -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/announcements">
+            <i class="bi bi-shop"></i> SELLIX
+        </a>
+        <div class="ms-auto">
+            <a th:href="@{/announcements}" class="btn btn-outline-light">
+                <i class="bi bi-arrow-left"></i> Назад к объявлениям
+            </a>
+        </div>
+    </div>
+</nav>
 
-<form th:action="@{/announcements}" th:method="post" th:object="${announcementRequest}" enctype="multipart/form-data">
-    <div>
-        <label for="title">Заголовок:</label>
-        <input id="title" type="text" th:field="*{title}" required>
-        <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
-            Ошибка заголовка
-        </div>
+<!-- Основной контент -->
+<div class="container mb-5">
+    <div class="form-container">
+        <h2 class="mb-4 text-center"><i class="bi bi-plus-circle"></i> Создать объявление</h2>
+
+        <form th:action="@{/announcements}" th:method="post" th:object="${announcementRequest}" enctype="multipart/form-data">
+            <!-- Заголовок -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Заголовок *</label>
+                <input id="title" type="text" th:field="*{title}" class="form-control" placeholder="Краткое название" required>
+                <div th:if="${#fields.hasErrors('title')}" class="invalid-feedback d-block" th:errors="*{title}">
+                    Ошибка заголовка
+                </div>
+            </div>
+
+            <!-- Описание -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Описание *</label>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="4" placeholder="Подробное описание товара" required></textarea>
+                <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback d-block" th:errors="*{description}">
+                    Ошибка описания
+                </div>
+            </div>
+
+            <!-- Цена и город -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="price" class="form-label">Цена (сум) *</label>
+                    <div class="input-group">
+                        <input id="price" type="number" th:field="*{price}" class="form-control" placeholder="0" required>
+                        <span class="input-group-text">сум</span>
+                    </div>
+                    <div th:if="${#fields.hasErrors('price')}" class="invalid-feedback d-block" th:errors="*{price}">
+                        Ошибка цены
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="city" class="form-label">Город</label>
+                    <select id="city" th:field="*{city}" class="form-select">
+                        <option value="">Вся страна</option>
+                        <option th:each="cityOpt : ${cities}" th:value="${cityOpt}" th:text="${cityOpt}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('city')}" class="invalid-feedback d-block" th:errors="*{city}">
+                        Ошибка города
+                    </div>
+                </div>
+            </div>
+
+            <!-- Загрузка изображений -->
+            <div class="mb-4">
+                <label class="form-label">Изображения *</label>
+                <p class="text-muted small">Первое изображение будет главным. Максимум 3 фото.</p>
+
+                <div class="row g-3">
+                    <!-- Изображение 1 (обязательное) -->
+                    <div class="col-md-4">
+                        <div class="file-upload btn btn-outline-primary w-100">
+                            <i class="bi bi-image"></i> Главное фото *
+                            <input id="image1" type="file" th:field="*{image1}" class="file-upload-input" accept="image/*" required
+                                   onchange="previewImage(this, 'preview1')">
+                        </div>
+                        <img id="preview1" class="preview-image">
+                    </div>
+
+                    <!-- Изображение 2 (необязательное) -->
+                    <div class="col-md-4">
+                        <div class="file-upload btn btn-outline-secondary w-100">
+                            <i class="bi bi-image"></i> Доп. фото 2
+                            <input id="image2" type="file" th:field="*{image2}" class="file-upload-input" accept="image/*"
+                                   onchange="previewImage(this, 'preview2')">
+                        </div>
+                        <img id="preview2" class="preview-image">
+                    </div>
+
+                    <!-- Изображение 3 (необязательное) -->
+                    <div class="col-md-4">
+                        <div class="file-upload btn btn-outline-secondary w-100">
+                            <i class="bi bi-image"></i> Доп. фото 3
+                            <input id="image3" type="file" th:field="*{image3}" class="file-upload-input" accept="image/*"
+                                   onchange="previewImage(this, 'preview3')">
+                        </div>
+                        <img id="preview3" class="preview-image">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопка отправки -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-check-circle"></i> Опубликовать объявление
+                </button>
+            </div>
+        </form>
     </div>
-    <div>
-        <label for="description">Описание:</label>
-        <input id="description" type="text" th:field="*{description}" required>
-        <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
-            Ошибка описания
-        </div>
+</div>
+
+<!-- Подвал -->
+<footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+        <p>© 2025 SELLIX. Все права защищены.</p>
     </div>
-    <div>
-        <label for="price">Цена:</label>
-        <input id="price" type="number" th:field="*{price}" required>
-        <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}">
-            Ошибка цены
-        </div>
-    </div>
-    <div>
-        <label for="city">Город:</label>
-        <select id="city" th:field="*{city}">
-            <option value="">Вся страна</option>
-            <option th:each="cityOpt : ${cities}" th:value="${cityOpt}" th:text="${cityOpt}"></option>
-        </select>
-        <div th:if="${#fields.hasErrors('city')}" th:errors="*{city}">
-            Ошибка города
-        </div>
-    </div>
-    <div>
-        <label for="image1">Изображение 1:</label>
-        <input id="image1" type="file" th:field="*{image1}" required>
-    </div>
-    <div>
-        <label for="image2">Изображение 2:</label>
-        <input id="image2" type="file" th:field="*{image2}">
-    </div>
-    <div>
-        <label for="image3">Изображение 3:</label>
-        <input id="image3" type="file" th:field="*{image3}">
-    </div>
-    <div>
-        <input type="submit" value="Опубликовать">
-    </div>
-</form>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Скрипт для предпросмотра изображений -->
+<script>
+    function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    }
+</script>
 </body>
 </html>

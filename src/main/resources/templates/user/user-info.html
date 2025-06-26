@@ -2,30 +2,177 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Профиль пользователя SELLIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Профиль пользователя — SELLIX</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid #f8f9fa;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .action-card {
+            transition: transform 0.2s;
+            height: 100%;
+        }
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body>
-<h1>SELLIX</h1>
-<h2>Профиль пользователя</h2>
+<body class="bg-light">
+<!-- Шапка -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/announcements">
+            <i class="bi bi-shop"></i> SELLIX
+        </a>
+        <div class="ms-auto d-flex align-items-center">
+            <a th:href="@{/announcements/create}" class="btn btn-warning me-2">
+                <i class="bi bi-plus-circle"></i> Подать объявление
+            </a>
+            <div th:insert="~{fragment :: logout}"></div>
+        </div>
+    </div>
+</nav>
 
-<div>
-    <p><strong>Имя пользователя:</strong> <span th:text="${user.username} ?: 'Не указано'">Не указано</span></p>
-    <p><strong>Имя:</strong> <span th:text="${user.firstName} ?: 'Не указано'">Не указано</span></p>
-    <p><strong>Фамилия:</strong> <span th:text="${user.lastName} ?: 'Не указано'">Не указано</span></p>
-    <p><strong>Номер телефона:</strong> <span th:text="${user.phoneNumber} ?: 'Не указано'">Не указано</span></p>
+<!-- Основной контент -->
+<div class="container mb-5">
+    <div class="profile-container">
+        <!-- Заголовок и аватар -->
+        <div class="text-center mb-4">
+            <div th:if="${user.avatar}">
+                <img th:src="@{/users/{id}/avatar(id=${user.id})}"
+                     class="profile-avatar mb-3"
+                     alt="Аватар пользователя">
+            </div>
+            <div th:unless="${user.avatar}">
+                <div class="profile-avatar mb-3 d-inline-flex align-items-center justify-content-center bg-secondary text-white">
+                    <i class="bi bi-person" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+            <h2>Профиль пользователя</h2>
+            <p class="text-muted" th:text="${user.firstName + ' ' + user.lastName} ?: 'Не указано'"></p>
+        </div>
+
+        <!-- Информация о пользователе -->
+        <div class="profile-info mb-4">
+            <div class="info-item">
+                <h5 class="d-flex align-items-center">
+                    <i class="bi bi-person-circle me-2"></i>
+                    <span>Основная информация</span>
+                </h5>
+                <div class="ms-4">
+                    <p class="mb-1"><strong>Имя пользователя:</strong> <span th:text="${user.username} ?: 'Не указано'"></span></p>
+                    <p class="mb-1"><strong>Имя:</strong> <span th:text="${user.firstName} ?: 'Не указано'"></span></p>
+                    <p class="mb-1"><strong>Фамилия:</strong> <span th:text="${user.lastName} ?: 'Не указано'"></span></p>
+                    <p class="mb-0"><strong>Телефон:</strong>
+                        <span th:if="${user.phoneNumber}" th:text="${user.phoneNumber}"></span>
+                        <span th:unless="${user.phoneNumber}" class="text-muted">Не указано</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Действия -->
+        <div class="row g-3">
+            <!-- Редактировать профиль -->
+            <div class="col-md-6">
+                <div class="card action-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-pencil-square text-primary" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mt-2">Редактировать профиль</h5>
+                        <p class="card-text text-muted small">Измените личные данные и аватар</p>
+                        <a th:href="@{/users/{id}/edit(id=${user.id})}" class="btn btn-outline-primary stretched-link">
+                            Перейти
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Мои объявления -->
+            <div class="col-md-6">
+                <div class="card action-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-list-ul text-success" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mt-2">Мои объявления</h5>
+                        <p class="card-text text-muted small">Просмотр и управление вашими объявлениями</p>
+                        <a th:href="@{/announcements/user/{id}(id=${user.id})}" class="btn btn-outline-success stretched-link">
+                            Перейти
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Для администратора -->
+            <div sec:authorize="hasAuthority('ADMIN')" class="col-md-6">
+                <div class="card action-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-lock text-danger" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mt-2">Панель администратора</h5>
+                        <p class="card-text text-muted small">Управление пользователями и объявлениями</p>
+                        <a th:href="@{/admin}" class="btn btn-outline-danger stretched-link">
+                            Перейти
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Создать объявление -->
+            <div class="col-md-6">
+                <div class="card action-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-plus-circle text-warning" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mt-2">Создать объявление</h5>
+                        <p class="card-text text-muted small">Разместите новое объявление</p>
+                        <a th:href="@{/announcements/create}" class="btn btn-outline-warning stretched-link">
+                            Перейти
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div th:if="${user.avatar}">
-    <img th:src="@{/users/{id}/avatar(id=${user.id})}" alt="Аватар пользователя">
-</div>
+<!-- Подвал -->
+<footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+        <p>© 2025 SELLIX. Все права защищены.</p>
+    </div>
+</footer>
 
-<div sec:authorize="hasAuthority('ADMIN')">
-    <p><a th:href="@{/admin}">Панель администратора</a></p>
-</div>
-
-<div>
-    <p><a th:href="@{/users/{id}/edit(id=${user.id})}">Редактировать профиль</a></p>
-    <p><a th:href="@{/announcements/user/{id}(id=${user.id})}">Мои объявления</a></p>
-</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

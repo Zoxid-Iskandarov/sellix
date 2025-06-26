@@ -5,7 +5,6 @@ import com.walking.sellix.entity.CustomUserDetails;
 import com.walking.sellix.model.announcement.AnnouncementDto;
 import com.walking.sellix.model.announcement.request.CreateAnnouncementRequest;
 import com.walking.sellix.model.announcement.request.UpdateAnnouncementRequest;
-import com.walking.sellix.model.user.request.UpdateUserRequest;
 import com.walking.sellix.service.AnnouncementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

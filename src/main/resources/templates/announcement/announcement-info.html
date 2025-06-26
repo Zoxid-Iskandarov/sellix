@@ -2,41 +2,175 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Подробности объявления SELLIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${announcementDto.title} + ' — SELLIX'">Подробности объявления — SELLIX</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .announcement-img {
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .seller-avatar {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .gallery-thumbnail {
+            height: 80px;
+            width: 80px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 4px;
+        }
+        .gallery-thumbnail:hover {
+            border-color: #0d6efd;
+        }
+        .price-badge {
+            font-size: 1.5rem;
+        }
+        .details-card {
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body>
-<h1>SELLIX</h1>
-<h2>Подробности объявления</h2>
+<body class="bg-light">
+<!-- Шапка (такая же, как на главной) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/announcements">
+            <i class="bi bi-shop"></i> SELLIX
+        </a>
+        <div sec:authorize="isAuthenticated()" class="ms-auto d-flex align-items-center">
+            <a th:href="@{/announcements/create}" class="btn btn-warning me-2">
+                <i class="bi bi-plus-circle"></i> Подать объявление
+            </a>
+            <a th:href="@{/users/{id}(id=${#authentication.principal.id})}" class="btn btn-outline-light">
+                <i class="bi bi-person"></i>
+                <span th:text="${#authentication.principal.username}">Профиль</span>
+            </a>
+            <div class="ms-2" th:insert="~{fragment :: logout}"></div>
+        </div>
+        <div sec:authorize="!isAuthenticated()" class="ms-auto">
+            <a th:href="@{/login}" class="btn btn-outline-light">
+                <i class="bi bi-box-arrow-in-right"></i> Войти
+            </a>
+        </div>
+    </div>
+</nav>
 
-<div th:each="announcementImage : ${announcementDto.images}">
-    <img th:src="@{/announcements/{id}/image(id=${announcementImage.id})}" alt="Изображение объявления">
-</div>
+<!-- Основной контент -->
+<div class="container mb-5">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/announcements}">Все объявления</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${announcementDto.title}"></li>
+        </ol>
+    </nav>
 
-<div>
-    <p><strong>Заголовок:</strong> <span th:text="${announcementDto.title} ?: 'Не указано'">Не указано</span></p>
-    <p><strong>Описание:</strong> <span th:text="${announcementDto.description} ?: 'Не указано'">Не указано</span></p>
-    <p><strong>Цена:</strong> <span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'">Не указано</span></p>
-    <p><strong>Город:</strong> <span th:text="${announcementDto.city} ?: 'Не указано'">Не указано</span></p>
-    <p><strong>Опубликовано:</strong> <span th:text="${announcementDto.createdAt} ?: 'Не указано'">Не указано</span></p>
-</div>
+    <div class="row">
+        <!-- Галерея изображений -->
+        <div class="col-lg-8 mb-4">
+            <div class="card details-card mb-3">
+                <div class="card-body">
+                    <!-- Главное изображение -->
+                    <img th:src="@{/announcements/{id}/image(id=${announcementDto.images[0].id})}"
+                         class="announcement-img w-100 mb-3"
+                         id="mainImage"
+                         alt="Изображение объявления">
 
-<div sec:authorize="isAuthenticated()">
-    <div th:if="${#authentication.principal.id == announcementDto.salesman.id}">
-        <p><a th:href="@{/announcements/{id}/edit(id=${announcementDto.id})}">Редактировать объявление</a></p>
+                    <!-- Миниатюры (если изображений больше 1) -->
+                    <div th:if="${#lists.size(announcementDto.images) > 1}" class="d-flex flex-wrap gap-2">
+                        <img th:each="announcementImage : ${announcementDto.images}"
+                             th:src="@{/announcements/{id}/image(id=${announcementImage.id})}"
+                             class="gallery-thumbnail"
+                             th:onclick="'document.getElementById(\'mainImage\').src = this.src;'"
+                             alt="Миниатюра">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация об объявлении -->
+        <div class="col-lg-4">
+            <div class="card details-card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title" th:text="${announcementDto.title}"></h2>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-primary price-badge">
+                                <span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'"></span>
+                            </span>
+                        <span class="text-muted" th:text="${announcementDto.createdAt}"></span>
+                    </div>
+
+                    <h5 class="mt-4"><i class="bi bi-card-text"></i> Описание</h5>
+                    <p class="card-text" th:text="${announcementDto.description} ?: 'Нет описания'"></p>
+
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        <span th:text="${announcementDto.city} ?: 'Город не указан'"></span>
+                    </div>
+
+                    <!-- Кнопка редактирования (для владельца) -->
+                    <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == announcementDto.salesman.id}">
+                        <a th:href="@{/announcements/{id}/edit(id=${announcementDto.id})}" class="btn btn-outline-primary w-100 mt-3">
+                            <i class="bi bi-pencil"></i> Редактировать
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Информация о продавце -->
+            <div class="card details-card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3"><i class="bi bi-person"></i> Продавец</h5>
+                    <div class="d-flex align-items-center mb-3">
+                        <img th:if="${salesman.avatar}"
+                             th:src="@{/users/{id}/avatar(id=${salesman.id})}"
+                             class="seller-avatar me-3"
+                             alt="Аватар">
+                        <div>
+                            <h6 th:text="${salesman.firstName + ' ' + salesman.lastName} ?: 'Не указано'"></h6>
+                            <small class="text-muted" th:text="'@' + ${salesman.username}"></small>
+                        </div>
+                    </div>
+
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-envelope me-2"></i> Почта</span>
+                            <span th:text="${salesman.username}"></span>
+                        </li>
+                        <li th:if="${salesman.phoneNumber != null && !salesman.phoneNumber.isEmpty()}"
+                            class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-telephone me-2"></i> Телефон</span>
+                            <span th:text="${salesman.phoneNumber}"></span>
+                        </li>
+                    </ul>
+
+                    <a th:href="@{/announcements/user/{id}(id=${salesman.id})}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-list-ul"></i> Все объявления продавца
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<h2>Продавец</h2>
-<div th:if="${salesman.avatar}">
-    <img th:src="@{/users/{id}/avatar(id=${salesman.id})}" alt="Аватар продавца">
-</div>
-<div>
-    <p><strong>Почта:</strong> <span th:text="${salesman.username} ?: 'Не указано'">Не указано</span></p>
-    <p><strong>Имя:</strong> <span th:text="${salesman.firstName + ' ' + salesman.lastName} ?: 'Не указано'">Не указано</span></p>
-    <p th:if="${salesman.phoneNumber != null && !salesman.phoneNumber.isEmpty()}">
-        <strong>Номер телефона:</strong> <span th:text="${salesman.phoneNumber}">Не указано</span>
-    </p>
-    <p><a th:href="@{/announcements/user/{id}(id=${salesman.id})}" th:text="'Все объявления от ' + ${salesman.username} ?: 'Продавца'">Все объявления</a></p>
-</div>
+<!-- Подвал -->
+<footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <p>© 2025 SELLIX. Все права защищены.</p>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

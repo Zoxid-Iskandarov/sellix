@@ -2,69 +2,198 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Главная страница SELLIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SELLIX — Главная</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .announcement-card {
+            transition: transform 0.2s;
+        }
+        .announcement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .announcement-img {
+            height: 200px;
+            object-fit: cover;
+        }
+        .search-form {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body>
-<h1>SELLIX</h1>
-
-<div sec:authorize="isAuthenticated()">
-    <p>
-        <a th:href="@{/users/{id}(id=${#authentication.principal.id})}">
-            Профиль (<span th:text="${#authentication.principal.username}">Не указано</span>)
+<body class="bg-light">
+<!-- Шапка -->
+<!-- Шапка -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/announcements">
+            <i class="bi bi-shop"></i> SELLIX
         </a>
-    </p>
-    <div th:insert="~{fragment :: logout}"></div>
-</div>
-<div sec:authorize="!isAuthenticated()">
-    <p><a th:href="@{/login}">Войти</a></p>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="ms-auto d-flex align-items-center">
+                <!-- Кнопка "Подать объявление" - всегда видна -->
+                <a th:href="@{${#authorization.expression('isAuthenticated()')} ? '/announcements/create' : '/login'}"
+                   class="btn btn-warning me-2">
+                    <i class="bi bi-plus-circle"></i> Подать объявление
+                </a>
+
+                <!-- Блок для авторизованных пользователей -->
+                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
+                    <a th:href="@{/users/{id}(id=${#authentication.principal.id})}" class="btn btn-outline-light me-2">
+                        <i class="bi bi-person"></i>
+                        <span th:text="${#authentication.principal.username}">Профиль</span>
+                    </a>
+                    <div th:insert="~{fragment :: logout}"></div>
+                </div>
+
+                <!-- Блок для неавторизованных пользователей -->
+                <div sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="btn btn-outline-light">
+                        <i class="bi bi-box-arrow-in-right"></i> Войти
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Основной контент -->
+<div class="container">
+    <!-- Форма поиска -->
+    <form th:action="@{/announcements}" th:method="get" th:object="${filter}" class="search-form mb-4">
+        <div class="row g-3">
+            <div class="col-md-5">
+                <label for="search" class="form-label">Что ищете?</label>
+                <input id="search" type="text" th:field="*{title}" class="form-control" placeholder="Например, iPhone 13">
+            </div>
+            <div class="col-md-3">
+                <label for="city" class="form-label">Город</label>
+                <select id="city" th:field="*{city}" class="form-select">
+                    <option value="">Вся страна</option>
+                    <option th:each="cityOpt : ${cities}" th:value="${cityOpt}" th:text="${cityOpt}" th:selected="${cityOpt == filter.city}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="minPrice" class="form-label">Цена от</label>
+                <input id="minPrice" type="number" th:field="*{minPrice}" class="form-control" placeholder="0">
+            </div>
+            <div class="col-md-2">
+                <label for="maxPrice" class="form-label">Цена до</label>
+                <input id="maxPrice" type="number" th:field="*{maxPrice}" class="form-control" placeholder="1000000">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Поиск
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Список объявлений -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+        <div th:each="announcementDto : ${announcementPage.getContent()}" class="col">
+            <div class="card h-100 announcement-card">
+                <img th:src="@{/announcements/{id}/preview(id=${announcementDto.id})}" class="card-img-top announcement-img" alt="Превью">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${announcementDto.title} ?: 'Без названия'"></h5>
+                    <p class="card-text text-muted mb-1">
+                        <i class="bi bi-geo-alt"></i>
+                        <span th:text="${announcementDto.city} ?: 'Не указано'"></span>
+                    </p>
+                    <p class="card-text text-muted mb-2">
+                        <i class="bi bi-clock"></i>
+                        <span th:text="${announcementDto.createdAt} ?: 'Не указано'"></span>
+                    </p>
+                    <p class="fw-bold text-primary fs-5 mb-0">
+                        <span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'"></span>
+                    </p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a th:href="@{/announcements/{id}(id=${announcementDto.id})}" class="btn btn-outline-primary w-100">
+                        Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пагинация -->
+    <!-- Пагинация -->
+    <nav th:if="${announcementPage.totalPages > 1}" aria-label="Навигация по страницам">
+        <!-- Вычисляем начальный и конечный индексы для отображения страниц -->
+        <th:block th:with="
+        startPage = ${T(java.lang.Math).max(0, announcementPage.number - 2)},
+        endPage = ${T(java.lang.Math).min(announcementPage.totalPages - 1, announcementPage.number + 2)}
+    ">
+            <ul class="pagination justify-content-center">
+                <!-- Первая страница -->
+                <li class="page-item" th:classappend="${announcementPage.first} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/announcements(page=0, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                </li>
+
+                <!-- Предыдущая страница -->
+                <li class="page-item" th:classappend="${!announcementPage.hasPrevious()} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/announcements(page=${announcementPage.number - 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+
+                <!-- Номера страниц -->
+                <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                    th:classappend="${i == announcementPage.number} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/announcements(page=${i}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}"
+                       th:text="${i + 1}"></a>
+                </li>
+
+                <!-- Следующая страница -->
+                <li class="page-item" th:classappend="${!announcementPage.hasNext()} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/announcements(page=${announcementPage.number + 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+
+                <!-- Последняя страница -->
+                <li class="page-item" th:classappend="${announcementPage.last} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/announcements(page=${announcementPage.totalPages - 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </th:block>
+
+        <!-- Информация о страницах -->
+        <div class="text-center text-muted small mt-2">
+            Страница <span th:text="${announcementPage.number + 1}"></span> из <span th:text="${announcementPage.totalPages}"></span>
+            | Показано <span th:text="${announcementPage.numberOfElements}"></span> из <span th:text="${announcementPage.totalElements}"></span> объявлений
+        </div>
+    </nav>
 </div>
 
-<p><a th:href="@{/announcements/create}">Подать объявление</a></p>
+<!-- Подвал (можно добавить позже) -->
+<footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+        <p>© 2025 SELLIX. Все права защищены.</p>
+    </div>
+</footer>
 
-<form th:action="@{/announcements}" th:method="get" th:object="${filter}">
-    <div>
-        <label for="search">Что ищете?</label>
-        <input id="search" type="text" th:field="*{title}">
-    </div>
-    <div>
-        <label for="city">Город:</label>
-        <select id="city" th:field="*{city}">
-            <option value="">Вся страна</option>
-            <option th:each="cityOpt : ${cities}" th:value="${cityOpt}" th:text="${cityOpt}" th:selected="${cityOpt == filter.city}"></option>
-        </select>
-    </div>
-    <div>
-        <label for="minPrice">Цена от:</label>
-        <input id="minPrice" type="number" th:field="*{minPrice}">
-    </div>
-    <div>
-        <label for="maxPrice">Цена до:</label>
-        <input id="maxPrice" type="number" th:field="*{maxPrice}">
-    </div>
-    <div>
-        <input type="submit" value="Поиск">
-    </div>
-</form>
-
-<div th:each="announcementDto : ${announcementPage.getContent()}">
-    <div>
-        <img th:src="@{/announcements/{id}/preview(id=${announcementDto.id})}" alt="Превью объявления">
-        <h4>
-            <span th:text="${announcementDto.title} ?: 'Не указано'">Не указано</span>
-            <a th:href="@{/announcements/{id}(id=${announcementDto.id})}">Подробнее</a>
-        </h4>
-        <p><span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'">Не указано</span></p>
-        <p><span th:text="${announcementDto.city} ?: 'Не указано'">Не указано</span></p>
-        <p><span th:text="${announcementDto.createdAt} ?: 'Не указано'">Не указано</span></p>
-    </div>
-</div>
-
-<div th:if="${announcementPage.totalPages > 1}">
-    <div>
-        <a th:if="${announcementPage.hasPrevious()}" th:href="@{/announcements(page=${announcementPage.number - 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">Предыдущая</a>
-        <span th:text="${announcementPage.number + 1}">1</span>
-        <a th:if="${announcementPage.hasNext()}" th:href="@{/announcements(page=${announcementPage.number + 1}, title=${filter.title}, city=${filter.city}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}">Следующая</a>
-    </div>
-</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
