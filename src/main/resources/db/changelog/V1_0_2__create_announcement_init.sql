@@ -3,7 +3,7 @@ CREATE TABLE announcement
     id          BIGSERIAL PRIMARY KEY,
     title       VARCHAR(100)   NOT NULL,
     description TEXT           NOT NULL,
-    price       DECIMAL(10, 2) NOT NULL,
+    price       DECIMAL(12, 2) NOT NULL,
     city        VARCHAR(100)   NOT NULL,
     user_id     BIGINT         NOT NULL REFERENCES users (id),
     created_at  TIMESTAMP      NOT NULL,
