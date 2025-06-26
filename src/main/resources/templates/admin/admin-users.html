@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>USERS</title>
+</head>
+<body>
+    <h1>SELLIX</h1>
+    <hr>
+
+    <h3>Фильтры</h3>
+    <form action="/admin" th:object="${filter}">
+        <label for="username">Имя пользователя:
+            <input id="username" type="text" name="username" th:value="*{username()}">
+        </label><br><br>
+        <label for="firstName">Имя:
+            <input id="firstName" type="text" name="firstName" th:value="*{firstName()}">
+        </label><br><br>
+        <label for="lastName">Фамилия:
+            <input id="lastName" type="text" name="lastName" th:value="*{lastName()}">
+        </label><br><br>
+        <label for="phoneNumber">Номер телефона:
+            <input id="phoneNumber" type="text" name="phoneNumber" th:value="*{phoneNumber()}">
+        </label><br><br>
+        <label for="role">Роль:
+            <select id="role" name="role">
+                <option value="">Все роли</option>
+                <option
+                        th:each="role : ${roles}"
+                        th:value="${role}"
+                        th:text="${role}"
+                        th:selected="${filter.role() == role}">
+                </option>
+            </select>
+        </label><br><br>
+        <label>Статус:</label>
+        <div>
+            <input type="radio" id="statusAll" name="status" value="" th:checked="${filter.status() == null}">
+            <label for="statusAll">Все</label>
+
+            <input type="radio" id="statusActive" name="status" value="true" th:checked="${filter.status() == true}">
+            <label for="statusActive">Активный</label>
+
+            <input type="radio" id="statusInactive" name="status" value="false" th:checked="${filter.status() == false}">
+            <label for="statusInactive">Неактивный</label>
+        </div><br>
+
+        <label for="size">Записей в таблице:
+            <select id="size" name="size" onchange="this.form.submit()">
+                <option th:each="sizeOption : ${pageSizes}"
+                        th:value="${sizeOption}"
+                        th:text="${sizeOption}"
+                        th:selected="${currentSize == sizeOption}">
+                </option>
+            </select>
+        </label><br><br>
+
+        <input type="submit" value="Поиск">
+    </form>
+    <br>
+
+    <div th:each="user : ${usersPage.getContent()}" th:object="${user}">
+        <p th:text="*{id + ' ' + username + ' ' + firstName + ' ' + lastName + ' ' + phoneNumber + ' ' + role + ' '
+         + status + ' ' + createdAt + ' ' + updatedAt}">User</p>
+
+        <div th:if="${user.role.name().equals('USER')}">
+            <form th:action="@{/admin/role/{id}(id=${user.id})}" th:method="patch">
+                <input type="submit" value="Назначить администратором">
+            </form>
+        </div>
+        <div th:if="${user.role.name().equals('ADMIN')}">
+            <form th:action="@{/admin/role/{id}(id=${user.id})}" th:method="patch">
+                <input type="submit" value="Исключить администратора">
+            </form>
+        </div>
+        <br>
+        <div th:if="${user.status == true}">
+            <form th:action="@{/admin/status/{id}(id=${user.id})}" th:method="patch">
+                <input type="submit" value="Заблокировать">
+            </form>
+        </div>
+        <div th:if="${user.status == false}">
+            <form th:action="@{/admin/status/{id}(id=${user.id})}" th:method="patch">
+                <input type="submit" value="Разблокировать">
+            </form>
+        </div>
+        <br>
+        <hr>
+    </div>
+
+    <div th:if="${usersPage.totalPages > 1}">
+        <div>
+            <span th:text="'Страница ' + ${usersPage.number + 1} + ' из ' + ${usersPage.totalPages}"></span>
+            <br>
+            <a th:if="${usersPage.hasPrevious()}"
+               th:href="@{/admin(username=${filter.username()}, firstName=${filter.firstName()}, lastName=${filter.lastName()}, phoneNumber=${filter.phoneNumber()}, role=${filter.role()}, status=${filter.status()}, page=${usersPage.number - 1}, size=${currentSize})}"
+               href="#">Предыдущая</a>
+            <span th:each="i : ${#numbers.sequence(0, usersPage.totalPages - 1)}">
+            <a th:if="${i != usersPage.number}"
+               th:href="@{/admin(username=${filter.username()}, firstName=${filter.firstName()}, lastName=${filter.lastName()}, phoneNumber=${filter.phoneNumber()}, role=${filter.role()}, status=${filter.status()}, page=${i}, size=${currentSize})}"
+               th:text="${i + 1}"></a>
+            <span th:if="${i == usersPage.number}" th:text="${i + 1}"></span>
+        </span>
+            <a th:if="${usersPage.hasNext()}"
+               th:href="@{/admin(username=${filter.username()}, firstName=${filter.firstName()}, lastName=${filter.lastName()}, phoneNumber=${filter.phoneNumber()}, role=${filter.role()}, status=${filter.status()}, page=${usersPage.number + 1}, size=${currentSize})}"
+               href="#">Следующая</a>
+        </div>
+    </div>
+</body>
+</html>

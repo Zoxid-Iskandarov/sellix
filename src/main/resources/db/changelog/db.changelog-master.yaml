@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/V1_0_1__create_users.sql
+  - include:
+      file: db/changelog/V1_0_2__create_announcement_init.sql
+  - include:
+      file: db/changelog/V1_0_3__add_unique_preview_index_to_announcement_image.sql

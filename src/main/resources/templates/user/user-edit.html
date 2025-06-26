@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update</title>
+</head>
+<body>
+    <h1>SELLIX</h1>
+    <hr>
+    <h2>UPDATE</h2>
+
+    <form th:action="@{/users/{id}(id=${userDto.id})}" th:method="patch" th:object="${userDto}" enctype="multipart/form-data">
+        <label for="firstName">Введите имя:
+            <input id="firstName" type="text" name="firstName" th:field="*{firstName}">
+        </label>
+        <div style="color: red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
+            firstName error
+        </div>
+        <br><br>
+        <label for="lastName">Введите фамилию:
+            <input id="lastName" type="text" name="lastName" th:field="*{lastName}">
+        </label>
+        <div style="color: red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
+            lastName error
+        </div>
+        <br><br>
+        <label for="phoneNumber">Введите номер телефона:
+            <input id="phoneNumber" type="text" name="phoneNumber" th:field="*{phoneNumber}">
+        </label><br><br>
+        <div th:if="${avatar}">
+            <img th:src="@{/users/{id}/avatar(id=${userDto.id})}" width="100" height="100" alt="avatar">
+        </div><br><br>
+        <label for="avatar">Установите аватарку:
+            <input id="avatar" type="file" name="avatar">
+        </label><br><br>
+
+        <input type="submit" value="Обновить">
+    </form>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+    <h1>SELLIX</h1>
+    <hr>
+    <h2>REGISTRATION</h2>
+
+    <form th:action="@{/users}" method="post" th:object="${userDto}" enctype="multipart/form-data">
+        <label for="username">Введите имя пользователя:
+            <input id="username" type="email" th:field="*{username}">
+        </label>
+        <div style="color: red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+            username error
+        </div>
+        <br><br>
+        <label for="firstName">Введите имя:
+            <input id="firstName" type="text" th:field="*{firstName}">
+        </label>
+        <div style="color: red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
+            firstName error
+        </div>
+        <br><br>
+        <label for="lastName">Введите фамилию:
+            <input id="lastName" type="text" th:field="*{lastName}">
+        </label>
+        <div style="color: red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
+            lastName error
+        </div>
+        <br><br>
+        <label for="password">Введите пароль:
+            <input id="password" type="password" th:field="*{password}">
+        </label>
+        <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+            password error
+        </div>
+        <br><br>
+        <label for="phoneNumber">Введите номер телефона:
+            <input id="phoneNumber" type="text" th:field="*{phoneNumber}">
+        </label>
+        <br><br>
+        <label for="avatar">Установите аватарку:
+            <input id="avatar" type="file" th:field="*{avatar}">
+        </label>
+        <br><br>
+
+        <input type="submit" value="Зарегистрироваться">
+    </form>
+</body>
+</html>

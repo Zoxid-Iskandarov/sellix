@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Announcement</title>
+</head>
+<body>
+    <h1>SELLIX</h1>
+    <hr>
+
+    <div th:each="announcementImage : ${announcementDto.images}">
+        <img th:src="@{/announcements/{id}/image(id=${announcementImage.id})}"
+             width="200" height="200" alt="Announcement Image"/>
+    </div><br>
+
+    <b>Заголовок: </b><p th:text="${announcementDto.title}">text</p><br>
+    <b>Описание: </b><p th:text="${announcementDto.description}">text</p><br>
+    <b>Цена: </b><p th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'">text</p><br>
+    <b>Город: </b><p th:text="${announcementDto.city}">text</p><br>
+    <b>Опубликовано: </b><span th:text="${announcementDto.createdAt}">text</span>
+
+    <div sec:authorize="isAuthenticated()">
+        <div th:if="${#authentication.principal.id == announcementDto.salesman.id}">
+            <a th:href="@{/announcements/{id}/edit(id=${announcementDto.id})}">Редактировать объявление</a>
+        </div>
+    </div>
+
+    <h2>Продавец</h2>
+    <div th:if="${salesman.avatar}">
+        <img th:src="@{/users/{id}/avatar(id=${salesman.id})}" width="100" height="100" alt="avatar">
+    </div>
+
+    <b>Почта: </b><span th:text="${salesman.username}">text</span>
+    <br>
+    <span th:text="${salesman.firstName + ' ' + salesman.lastName}">salesman</span>
+    <div th:if="${salesman.phoneNumber != null && !salesman.phoneNumber.isEmpty()}">
+        <span th:text="'Номер телефона: ' + ${salesman.phoneNumber}"></span>
+    </div>
+
+    <a th:href="@{/announcements/user/{id}(id=${salesman.id})}" th:text="'Все объявления от ' + ${salesman.username}">Text</a>
+</body>
+</html>

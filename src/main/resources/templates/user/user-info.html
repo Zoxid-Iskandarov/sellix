@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>USERS</title>
+</head>
+<body>
+    <h1>SELLIX</h1>
+    <hr>
+    <h2>USER</h2>
+
+    <p th:text="${user.username}">user</p>
+    <p th:text="${user.firstName}">user</p>
+    <p th:text="${user.lastName}">user</p>
+    <p th:text="${user.phoneNumber}">user</p>
+
+    <div th:if="${user.avatar}">
+        <img th:src="@{/users/{id}/avatar(id=${user.id})}" width="100" height="100" alt="avatar">
+    </div>
+
+    <div sec:authorize="hasAuthority('ADMIN')">
+        <a th:href="@{/admin}">Панель администратора</a>
+    </div>
+    <a th:href="@{/users/{id}/edit(id=${user.id})}">Редактировать профиль</a><br>
+    <a th:href="@{/announcements/user/{id}(id=${user.id})}">Мои объявления</a>
+</body>
+</html>

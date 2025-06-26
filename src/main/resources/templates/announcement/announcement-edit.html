@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>EDIT</title>
+</head>
+<body>
+<h1>SELLIX</h1>
+<hr>
+<h2>EDIT ANNOUNCEMENT</h2>
+
+<div th:each="announcementImage : ${images}">
+    <img th:src="@{/announcements/{id}/image(id=${announcementImage.id})}"
+         width="200" height="200" alt="Announcement Image"/>
+</div><br>
+
+<form th:action="@{/announcements/{id}(id=${announcementRequest.id})}"
+      th:method="patch"
+      enctype="multipart/form-data"
+      th:object="${announcementRequest}">
+    <label for="title">Введите заголовок:
+        <input id="title" type="text" name="title" th:field="*{title}">
+    </label>
+    <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Ошибка</div>
+    <br><br>
+    <label for="description">Введите описание:
+        <input id="description" type="text" name="description" th:field="*{description}">
+    </label>
+    <div style="color:red" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Ошибка</div>
+    <br><br>
+    <label for="price">Введите цену:
+        <input id="price" type="number" name="price" th:field="*{price}">
+    </label>
+    <div style="color:red" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">Ошибка</div>
+    <br><br>
+    <label for="city">Введите город:
+        <select id="city" name="city" th:field="*{city}">
+            <option value="">Вся страна</option>
+            <option th:each="cityOpt : ${cities}"
+                    th:value="${cityOpt}"
+                    th:text="${cityOpt}"
+                    th:selected="${cityOpt == announcementRequest.city}">
+            </option>
+        </select>
+    </label>
+    <div style="color:red" th:if="${#fields.hasErrors('city')}" th:errors="*{city}">Ошибка</div>
+    <br><br>
+    <label for="image1">
+        <input id="image1" type="file" name="image1">
+    </label><br><br>
+    <label for="image2">
+        <input id="image2" type="file" name="image2">
+    </label><br><br>
+    <label for="image3">
+        <input id="image3" type="file" name="image3">
+    </label><br><br>
+
+    <input type="submit" value="Обновить">
+</form>
+</body>
+</html>

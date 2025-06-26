@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h1>SELLIX</h1>
+    <hr>
+    <h2>LOGIN</h2>
+
+    <form th:action="@{/login}" method="post">
+        <label for="username">Введите имя пользователя:
+            <input id="username" type="email" name="username">
+        </label><br><br>
+        <label for="password">Введите пароль:
+            <input id="password" type="password" name="password">
+        </label><br><br>
+
+        <input type="submit" value="Войти">
+    </form>
+
+    <a href="/registration">Зарегистрироваться</a>
+</body>
+</html>
