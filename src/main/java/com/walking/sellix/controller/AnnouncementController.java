@@ -6,6 +6,7 @@ import com.walking.sellix.model.announcement.AnnouncementDto;
 import com.walking.sellix.model.announcement.request.CreateAnnouncementRequest;
 import com.walking.sellix.model.announcement.request.UpdateAnnouncementRequest;
 import com.walking.sellix.service.AnnouncementService;
+import com.walking.sellix.util.Constant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,18 +26,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/announcements")
 @RequiredArgsConstructor
 public class AnnouncementController {
-    private static final List<String> CITIES = List.of(
-            "Ташкент", "Самарканд", "Наманган", "Навои",
-            "Каттакурган", "Кашкадарья", "Каракалпакстан",
-            "Джизак", "Бухара", "Андижан"
-    );
-
     private final AnnouncementService announcementService;
 
     @GetMapping
@@ -47,7 +40,7 @@ public class AnnouncementController {
 
         model.addAttribute("announcementPage", announcementPage);
         model.addAttribute("filter", filter);
-        model.addAttribute("cities", CITIES);
+        model.addAttribute("cities", Constant.CITIES);
 
         return "announcement/announcements";
     }
@@ -92,7 +85,7 @@ public class AnnouncementController {
 
     @GetMapping("/create")
     public String createPage(Model model) {
-        model.addAttribute("cities", CITIES);
+        model.addAttribute("cities", Constant.CITIES);
 
         if (!model.containsAttribute("announcementRequest")) {
             model.addAttribute("announcementRequest", new CreateAnnouncementRequest());
@@ -135,7 +128,7 @@ public class AnnouncementController {
 
                     model.addAttribute("announcementRequest", request);
                     model.addAttribute("images", announcementReadDto.getImages());
-                    model.addAttribute("cities", CITIES);
+                    model.addAttribute("cities", Constant.CITIES);
 
                     return "announcement/announcement-edit";
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -151,7 +144,7 @@ public class AnnouncementController {
                     .ifPresent(announcementReadDto ->
                             model.addAttribute("images", announcementReadDto.getImages()));
 
-            model.addAttribute("cities", CITIES);
+            model.addAttribute("cities", Constant.CITIES);
 
             return "announcement/announcement-edit";
         }
