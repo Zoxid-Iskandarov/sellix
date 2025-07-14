@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                         .defaultSuccessUrl("/announcements"))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login"));
+                        .logoutSuccessUrl("/login?logout"));
 
         return http.build();
     }

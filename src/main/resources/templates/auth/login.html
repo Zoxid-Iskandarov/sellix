@@ -60,6 +60,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
 
+                <!-- Сообщение об успешном выходе -->
+                <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle-fill"></i> Вы успешно вышли из аккаунта
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
                 <!-- Форма входа -->
                 <form th:action="@{/login}" th:method="post">
                     <!-- Поле email -->
