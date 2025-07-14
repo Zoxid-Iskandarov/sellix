@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -119,6 +120,7 @@ public class AnnouncementController {
         return "redirect:/announcements";
     }
 
+    @PreAuthorize("@userAccessChecker.isOwnerOfAnnouncement(#id, principal.id)")
     @GetMapping("/{id}/edit")
     public String editPage(@PathVariable("id") Long id, Model model) {
         return announcementService.getById(id)
@@ -139,6 +141,7 @@ public class AnnouncementController {
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @PreAuthorize("@userAccessChecker.isOwnerOfAnnouncement(#id, principal.id)")
     @PatchMapping("/{id}")
     public String update(@PathVariable("id") Long id,
                          @ModelAttribute("announcementRequest") @Validated UpdateAnnouncementRequest announcementRequest,

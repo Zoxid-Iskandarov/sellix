@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +26,7 @@ public class UserController {
     private final UserService userService;
     private final UniqueUsernameValidator uniqueUsernameValidator;
 
+    @PreAuthorize("@userAccessChecker.isOwner(#id, principal.id)")
     @GetMapping("/{id}")
     public String getUser(@PathVariable("id") Long id, Model model) {
         return userService.getById(id)
@@ -59,6 +61,7 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     }
 
+    @PreAuthorize("@userAccessChecker.isOwner(#id, principal.id)")
     @GetMapping("/{id}/edit")
     public String updatePage(@PathVariable("id") Long id, Model model) {
         return userService.getById(id)
@@ -77,6 +80,7 @@ public class UserController {
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @PreAuthorize("@userAccessChecker.isOwner(#id, principal.id)")
     @PatchMapping("/{id}")
     public String update(@PathVariable("id") Long id,
                          @ModelAttribute("userDto") @Validated UpdateUserRequest userRequest,
