@@ -1,0 +1,23 @@
+services:
+  sellix:
+    image: zoxid/sellix:1.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/sellix_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
+  database:
+    image: postgres:17.2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sellix_db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
