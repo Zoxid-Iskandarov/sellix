@@ -128,3 +128,32 @@
 <div align="center">
   <img src="docs/screenshots/admin-page.png" width="700" alt="Админ-панель">
 </div>
+
+---
+
+## 🚀 Запуск проекта
+
+### 📦 Требования
+
+- Установленный [Docker](https://www.docker.com/products/docker-desktop/)
+- Установленный [Git](https://git-scm.com/)
+
+### 🔧 Шаги
+
+1. Клонируйте репозиторий:
+   ```
+   git clone https://github.com/Zoxid-Iskandarov/sellix.git
+   cd sellix
+2. Запустите контейнеры:
+    ```
+    docker compose up -d
+    ```
+
+    ✅ Приложение будет доступно по адресу: http://localhost:8080/announcements
+
+
+3. Для остановки контейнеров:
+    ```
+    docker compose down
+   ```
+
