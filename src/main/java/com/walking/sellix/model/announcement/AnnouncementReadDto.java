@@ -2,26 +2,30 @@ package com.walking.sellix.model.announcement;
 
 import com.walking.sellix.entity.AnnouncementImage;
 import com.walking.sellix.model.user.UserReadDto;
-import lombok.Value;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Value
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AnnouncementReadDto {
-    Long id;
+    private Long id;
 
-    String title;
+    private String title;
 
-    String description;
+    private String description;
 
-    BigDecimal price;
+    private BigDecimal price;
 
-    String city;
+    private String city;
 
-    String createdAt;
+    private String createdAt;
 
-    List<AnnouncementImage> images;
+    private List<AnnouncementImage> images;
 
-    UserReadDto salesman;
+    private UserReadDto salesman;
 }

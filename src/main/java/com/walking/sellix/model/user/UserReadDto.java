@@ -1,18 +1,22 @@
 package com.walking.sellix.model.user;
 
-import lombok.Value;
+import lombok.*;
 
-@Value
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserReadDto {
-    Long id;
+    private Long id;
 
-    String username;
+    private String username;
 
-    String firstName;
+    private String firstName;
 
-    String lastName;
+    private String lastName;
 
-    String phoneNumber;
+    private String phoneNumber;
 
-    String avatar;
+    private String avatar;
 }

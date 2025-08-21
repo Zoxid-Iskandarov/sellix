@@ -5,7 +5,7 @@ CREATE TABLE announcement
     description TEXT           NOT NULL,
     price       DECIMAL(12, 2) NOT NULL,
     city        VARCHAR(100)   NOT NULL,
-    user_id     BIGINT         NOT NULL REFERENCES users (id),
+    user_id     BIGINT         NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     created_at  TIMESTAMP      NOT NULL,
     updated_at  TIMESTAMP DEFAULT NULL
 );

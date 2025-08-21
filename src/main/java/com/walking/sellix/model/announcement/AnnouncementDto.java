@@ -1,20 +1,24 @@
 package com.walking.sellix.model.announcement;
 
-import lombok.Value;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Value
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AnnouncementDto {
-    Long id;
+    private Long id;
 
-    String title;
+    private String title;
 
-    String description;
+    private String description;
 
-    BigDecimal price;
+    private BigDecimal price;
 
-    String city;
+    private String city;
 
-    String createdAt;
+    private String createdAt;
 }

@@ -15,12 +15,13 @@ public class AnnouncementDtoConverter extends AbstractConverter<Announcement, An
 
     @Override
     public AnnouncementDto convert(Announcement source) {
-        return new AnnouncementDto(
-                source.getId(),
-                source.getTitle(),
-                source.getDescription(),
-                source.getPrice(),
-                source.getCity(),
-                source.getCreatedAt().format(FORMATTER));
+        return AnnouncementDto.builder()
+                .id(source.getId())
+                .title(source.getTitle())
+                .description(source.getDescription())
+                .price(source.getPrice())
+                .city(source.getCity())
+                .createdAt(source.getCreatedAt().format(FORMATTER))
+                .build();
     }
 }

@@ -24,9 +24,9 @@ public class AdminInitializer implements ApplicationRunner {
         if (!userRepository.existsByRole(Role.ADMIN)) {
             User admin = User.builder()
                     .username("admin@gmail.com")
-                    .firstName("Default")
+                    .firstName("Admin")
                     .lastName("Admin")
-                    .password(passwordEncoder.encode("DefaultAdmin1"))
+                    .password(passwordEncoder.encode("DefaultAdmin"))
                     .role(Role.ADMIN)
                     .status(true)
                     .createdAt(LocalDateTime.now())
