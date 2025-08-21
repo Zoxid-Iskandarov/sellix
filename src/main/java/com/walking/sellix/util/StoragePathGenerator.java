@@ -7,16 +7,16 @@ import java.util.UUID;
 
 @UtilityClass
 public class StoragePathGenerator {
-    private static String generateFileName(MultipartFile file) {
-        return "%s.%s".formatted(UUID.randomUUID(), getFileExtension(file.getOriginalFilename()));
-    }
-
     private static String getFileExtension(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
             return "jpg";
         }
 
         return fileName.substring(fileName.lastIndexOf('.') + 1);
+    }
+
+    private static String generateFileName(MultipartFile file) {
+        return "%s.%s".formatted(UUID.randomUUID(), getFileExtension(file.getOriginalFilename()));
     }
 
     public static String generateObjectName(MultipartFile file, String username) {

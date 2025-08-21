@@ -35,7 +35,7 @@ public class AnnouncementController {
     @GetMapping
     public String index(AnnouncementFilter filter, Pageable pageable, Model model) {
         Page<AnnouncementDto> announcementPage = announcementService.getAll(filter,
-                PageRequest.of(pageable.getPageNumber(), 30,
+                PageRequest.of(pageable.getPageNumber(), 50,
                 Sort.by(Sort.Direction.DESC, "createdAt")));
 
         model.addAttribute("announcementPage", announcementPage);

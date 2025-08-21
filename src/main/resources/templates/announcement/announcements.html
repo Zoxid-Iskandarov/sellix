@@ -8,6 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Select2 Bootstrap 5 theme -->
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     <style>
         .announcement-card {
             transition: transform 0.2s;
@@ -29,7 +33,6 @@
     </style>
 </head>
 <body class="bg-light">
-<!-- Шапка -->
 <!-- Шапка -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
     <div class="container">
@@ -74,13 +77,14 @@
         <div class="row g-3">
             <div class="col-md-5">
                 <label for="search" class="form-label">Что ищете?</label>
-                <input id="search" type="text" th:field="*{title}" class="form-control" placeholder="Например, iPhone 13">
+                <input id="search" type="text" th:field="*{title}" class="form-control" placeholder="Например, iPhone 16">
             </div>
             <div class="col-md-3">
                 <label for="city" class="form-label">Город</label>
-                <select id="city" th:field="*{city}" class="form-select">
+                <select id="city" th:field="*{city}" class="form-select" data-allow-clear="true" data-placeholder="Вся страна">
                     <option value="">Вся страна</option>
-                    <option th:each="cityOpt : ${cities}" th:value="${cityOpt}" th:text="${cityOpt}" th:selected="${cityOpt == filter.city}"></option>
+                    <option th:each="cityOpt : ${cities}" th:value="${cityOpt}" th:text="${cityOpt}"
+                            th:selected="${cityOpt == filter.city}"></option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -127,7 +131,6 @@
         </div>
     </div>
 
-    <!-- Пагинация -->
     <!-- Пагинация -->
     <nav th:if="${announcementPage.totalPages > 1}" aria-label="Навигация по страницам">
         <!-- Вычисляем начальный и конечный индексы для отображения страниц -->
@@ -195,5 +198,27 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- jQuery (необходим для Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#city').select2({
+            theme: 'bootstrap-5',
+            allowClear: true,
+            placeholder: "Выберите город или введите свой",
+            tags: true, // Разрешить ввод произвольных значений
+            createTag: function (params) {
+                return {
+                    id: params.term,
+                    text: params.term,
+                    newTag: true
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

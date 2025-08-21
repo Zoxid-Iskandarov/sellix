@@ -37,6 +37,7 @@ public class MinioInitializer implements ApplicationRunner {
                 log.info("Minio bucket already exists {}", bucket);
             }
         } catch (Exception e) {
+            log.error("Failed to create minio bucket", e);
             throw new RuntimeException(e);
         }
     }

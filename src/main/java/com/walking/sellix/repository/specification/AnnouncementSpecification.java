@@ -28,7 +28,8 @@ public class AnnouncementSpecification {
             }
 
             if (filter.city() != null && !filter.city().isBlank()) {
-                predicates.add(cb.equal(root.get(Announcement_.city), filter.city()));
+                predicates.add(cb.like(cb.lower(root.get(Announcement_.city)),
+                        filter.city().toLowerCase() + "%"));
             }
 
             return cb.and(predicates.toArray(Predicate[]::new));
