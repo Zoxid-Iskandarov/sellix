@@ -17,4 +17,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Long
     Optional<Announcement> findWithImagesById(Long id);
 
     List<Announcement> findAllByUserId(Long userId);
+
+    boolean existsByIdAndUserId(Long id, Long userId);
 }

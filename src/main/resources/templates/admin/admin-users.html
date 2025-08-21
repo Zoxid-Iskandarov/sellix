@@ -155,49 +155,54 @@
                         <span th:if="${user.role.name() == 'USER'}" class="badge bg-primary">Пользователь</span>
                     </td>
                     <td>
-                                <span th:if="${user.status == true}" class="status-active">
-                                    <i class="bi bi-check-circle-fill"></i> Активен
-                                </span>
+                        <span th:if="${user.status == true}" class="status-active">
+                            <i class="bi bi-check-circle-fill"></i> Активен
+                        </span>
                         <span th:if="${user.status == false}" class="status-inactive">
-                                    <i class="bi bi-x-circle-fill"></i> Неактивен
-                                </span>
+                            <i class="bi bi-x-circle-fill"></i> Неактивен
+                        </span>
                     </td>
                     <td th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy')} ?: '–'"></td>
                     <td th:text="${#temporals.format(user.updatedAt, 'dd.MM.yyyy')} ?: '–'"></td>
                     <td class="table-actions text-end">
                         <div class="btn-group btn-group-sm" role="group">
-                            <form th:if="${user.role.name() == 'USER'}"
-                                  th:action="@{/admin/role/{id}(id=${user.id})}"
-                                  th:method="patch"
-                                  class="d-inline">
-                                <button type="submit" class="btn btn-outline-danger">
-                                    <i class="bi bi-shield-plus"></i> Сделать админом
-                                </button>
-                            </form>
-                            <form th:if="${user.role.name() == 'ADMIN'}"
-                                  th:action="@{/admin/role/{id}(id=${user.id})}"
-                                  th:method="patch"
-                                  class="d-inline">
-                                <button type="submit" class="btn btn-outline-primary">
-                                    <i class="bi bi-shield-minus"></i> Убрать админа
-                                </button>
-                            </form>
-                            <form th:if="${user.status == true}"
-                                  th:action="@{/admin/status/{id}(id=${user.id})}"
-                                  th:method="patch"
-                                  class="d-inline">
-                                <button type="submit" class="btn btn-outline-danger">
-                                    <i class="bi bi-lock"></i> Заблокировать
-                                </button>
-                            </form>
-                            <form th:if="${user.status == false}"
-                                  th:action="@{/admin/status/{id}(id=${user.id})}"
-                                  th:method="patch"
-                                  class="d-inline">
-                                <button type="submit" class="btn btn-outline-success">
-                                    <i class="bi bi-unlock"></i> Разблокировать
-                                </button>
-                            </form>
+                            <!-- Если активен -->
+                            <th:block th:if="${user.status == true}">
+                                <form th:if="${user.role.name() == 'USER'}"
+                                      th:action="@{/admin/role/{id}(id=${user.id})}"
+                                      th:method="patch"
+                                      class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="bi bi-shield-plus"></i> Сделать админом
+                                    </button>
+                                </form>
+                                <form th:if="${user.role.name() == 'ADMIN'}"
+                                      th:action="@{/admin/role/{id}(id=${user.id})}"
+                                      th:method="patch"
+                                      class="d-inline">
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="bi bi-shield-minus"></i> Убрать админа
+                                    </button>
+                                </form>
+                                <form th:action="@{/admin/status/{id}(id=${user.id})}"
+                                      th:method="patch"
+                                      class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="bi bi-lock"></i> Заблокировать
+                                    </button>
+                                </form>
+                            </th:block>
+
+                            <!-- Если заблокирован -->
+                            <th:block th:if="${user.status == false}">
+                                <form th:action="@{/admin/status/{id}(id=${user.id})}"
+                                      th:method="patch"
+                                      class="d-inline">
+                                    <button type="submit" class="btn btn-outline-success">
+                                        <i class="bi bi-unlock"></i> Разблокировать
+                                    </button>
+                                </form>
+                            </th:block>
                         </div>
                     </td>
                 </tr>

@@ -38,10 +38,17 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+        .btn-delete {
+            transition: all 0.3s ease;
+        }
+        .btn-delete:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
+        }
     </style>
 </head>
 <body class="bg-light">
-<!-- Шапка (такая же, как на главной) -->
+<!-- Шапка -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
     <div class="container">
         <a class="navbar-brand fw-bold" href="/announcements">
@@ -86,7 +93,7 @@
                          id="mainImage"
                          alt="Изображение объявления">
 
-                    <!-- Миниатюры (если изображений больше 1) -->
+                    <!-- Миниатюры -->
                     <div th:if="${#lists.size(announcementDto.images) > 1}" class="d-flex flex-wrap gap-2">
                         <img th:each="announcementImage : ${announcementDto.images}"
                              th:src="@{/announcements/{id}/image(id=${announcementImage.id})}"
@@ -104,9 +111,9 @@
                 <div class="card-body">
                     <h2 class="card-title" th:text="${announcementDto.title}"></h2>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge bg-primary price-badge">
-                                <span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'"></span>
-                            </span>
+                        <span class="badge bg-primary price-badge">
+                            <span th:text="${#numbers.formatDecimal(announcementDto.price, 0, 'POINT', 0, 'COMMA')} + ' сум'"></span>
+                        </span>
                         <span class="text-muted" th:text="${announcementDto.createdAt}"></span>
                     </div>
 
@@ -118,11 +125,25 @@
                         <span th:text="${announcementDto.city} ?: 'Город не указан'"></span>
                     </div>
 
-                    <!-- Кнопка редактирования (для владельца) -->
-                    <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == announcementDto.salesman.id}">
-                        <a th:href="@{/announcements/{id}/edit(id=${announcementDto.id})}" class="btn btn-outline-primary w-100 mt-3">
-                            <i class="bi bi-pencil"></i> Редактировать
-                        </a>
+                    <!-- Кнопки действий -->
+                    <div sec:authorize="isAuthenticated()">
+                        <!-- Редактировать (только владелец) -->
+                        <div th:if="${#authentication.principal.id == announcementDto.salesman.id}">
+                            <a th:href="@{/announcements/{id}/edit(id=${announcementDto.id})}"
+                               class="btn btn-outline-primary w-100 mt-3">
+                                <i class="bi bi-pencil"></i> Редактировать
+                            </a>
+                        </div>
+
+                        <div th:if="${#authentication.principal.id == announcementDto.salesman.id or #authorization.expression('hasAuthority(''ADMIN'')')}">
+                            <form th:action="@{/announcements/{id}(id=${announcementDto.id})}"
+                                  th:method="delete" id="deleteForm">
+                                <button type="button" class="btn btn-danger w-100 mt-2 btn-delete"
+                                        onclick="confirmDelete('deleteForm')">
+                                    <i class="bi bi-trash"></i> Удалить объявление
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -172,5 +193,14 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Скрипт подтверждения удаления -->
+<script>
+    function confirmDelete(formId) {
+        if (confirm('Вы уверены, что хотите удалить это объявление? Это действие нельзя отменить.')) {
+            document.getElementById(formId).submit();
+        }
+    }
+</script>
 </body>
 </html>

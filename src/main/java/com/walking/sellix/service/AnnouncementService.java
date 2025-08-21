@@ -126,6 +126,20 @@ public class AnnouncementService {
         }
     }
 
+    @Transactional
+    public boolean delete(Long id) {
+        return announcementRepository.findById(id)
+                .map(announcement -> {
+                    announcement.getImages()
+                            .forEach(img -> minioService.remove(img.getImage()));
+                    announcementRepository.delete(announcement);
+                    announcementRepository.flush();
+
+                    return true;
+                })
+                .orElse(false);
+    }
+
     private boolean hasNewImages(MultipartFile... images) {
         return Arrays.stream(images)
                 .anyMatch(image -> image != null && !image.isEmpty());

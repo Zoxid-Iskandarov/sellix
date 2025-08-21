@@ -1,5 +1,6 @@
 package com.walking.sellix.controller;
 
+import com.walking.sellix.entity.Role;
 import com.walking.sellix.model.announcement.AnnouncementFilter;
 import com.walking.sellix.entity.CustomUserDetails;
 import com.walking.sellix.model.announcement.AnnouncementDto;
@@ -152,5 +153,20 @@ public class AnnouncementController {
         return announcementService.update(id, announcementRequest)
                 .map(announcementDto -> "redirect:/announcements/" + id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PreAuthorize("@userAccessChecker.canDeleteAnnouncement(#id, #userDetails)")
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (!announcementService.delete(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        if (userDetails.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals(Role.ADMIN.getAuthority()))) {
+            return "redirect:/announcements";
+        }
+
+        return "redirect:/announcements/user/%d".formatted(userDetails.getId());
     }
 }
