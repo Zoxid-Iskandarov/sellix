@@ -14,6 +14,7 @@ import com.walking.sellix.model.announcement.request.UpdateAnnouncementRequest;
 import com.walking.sellix.repository.AnnouncementImageRepository;
 import com.walking.sellix.repository.AnnouncementRepository;
 import com.walking.sellix.repository.specification.AnnouncementSpecification;
+import com.walking.sellix.util.StoragePathGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.hibernate.Hibernate;
@@ -32,13 +33,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AnnouncementService {
+    private final MinioService minioService;
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementImageRepository announcementImageRepository;
+
     private final CreateAnnouncementRequestConverter createAnnouncementRequestConverter;
     private final AnnouncementDtoConverter announcementDtoConverter;
     private final AnnouncementReadDtoConverter announcementReadDtoConverter;
     private final UpdateAnnouncementRequestConverter updateAnnouncementRequestConverter;
-    private final ImageService imageService;
 
     public Page<AnnouncementDto> getAll(AnnouncementFilter filter, Pageable pageable) {
         return announcementRepository.findAll(AnnouncementSpecification.filterAnnouncements(filter), pageable)
@@ -56,7 +58,7 @@ public class AnnouncementService {
         return announcementImageRepository.getPreviewImage(announcementId)
                 .map(AnnouncementImage::getImage)
                 .filter(StringUtils::hasText)
-                .flatMap(imageService::get);
+                .flatMap(minioService::get);
     }
 
     public Optional<AnnouncementReadDto> getById(Long id) {
@@ -71,16 +73,20 @@ public class AnnouncementService {
         return announcementImageRepository.findById(announcementImageId)
                 .map(AnnouncementImage::getImage)
                 .filter(StringUtils::hasText)
-                .flatMap(imageService::get);
+                .flatMap(minioService::get);
     }
 
     @Transactional
     public void create(CreateAnnouncementRequest announcementRequest) {
-        Announcement announcement = createAnnouncementRequestConverter.convert(announcementRequest);
-        uploadImages(announcement, announcementRequest.getImage1(),
-                announcementRequest.getImage2(), announcementRequest.getImage3());
+        Optional.of(createAnnouncementRequestConverter.convert(announcementRequest))
+                .ifPresent(announcement -> {
+                    announcementRepository.saveAndFlush(announcement);
 
-        announcementRepository.save(announcement);
+                    uploadImages(announcement, announcementRequest.getImage1(), announcementRequest.getImage2(),
+                            announcementRequest.getImage3());
+
+                    announcementRepository.save(announcement);
+                });
     }
 
     @Transactional
@@ -107,22 +113,27 @@ public class AnnouncementService {
                 continue;
             }
 
+            String objectName = StoragePathGenerator.generateObjectName(image, announcement.getId());
+
             AnnouncementImage announcementImage = new AnnouncementImage();
-            announcementImage.setImage(image.getOriginalFilename());
+            announcementImage.setImage(objectName);
             announcementImage.setPreview(isFirst);
             isFirst = false;
 
             announcement.setImage(announcementImage);
-            imageService.upload(image.getOriginalFilename(), image.getInputStream());
+
+            minioService.upload(objectName, image.getInputStream(), image.getContentType());
         }
     }
 
     private boolean hasNewImages(MultipartFile... images) {
-        return Arrays.stream(images).anyMatch(image -> image != null && !image.isEmpty());
+        return Arrays.stream(images)
+                .anyMatch(image -> image != null && !image.isEmpty());
     }
 
     private void removeOldImages(Announcement announcement) {
         List<AnnouncementImage> toDelete = announcement.getImages();
+        toDelete.forEach(img -> minioService.remove(img.getImage()));
         announcement.getImages().clear();
 
         announcementImageRepository.deleteAll(toDelete);

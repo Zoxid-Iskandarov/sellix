@@ -9,12 +9,13 @@ import org.springframework.stereotype.Component;
 public class UserReadDtoConverter extends AbstractConverter<User, UserReadDto> {
     @Override
     public UserReadDto convert(User source) {
-        return new UserReadDto(
-                source.getId(),
-                source.getUsername(),
-                source.getFirstName(),
-                source.getLastName(),
-                source.getPhoneNumber(),
-                source.getAvatar());
+        return UserReadDto.builder()
+                .id(source.getId())
+                .username(source.getUsername())
+                .firstName(source.getFirstName())
+                .lastName(source.getLastName())
+                .phoneNumber(source.getPhoneNumber())
+                .avatar(source.getAvatar())
+                .build();
     }
 }

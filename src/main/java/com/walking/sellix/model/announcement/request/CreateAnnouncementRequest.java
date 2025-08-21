@@ -1,12 +1,16 @@
 package com.walking.sellix.model.announcement.request;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CreateAnnouncementRequest {
     @NotBlank(message = "Название объявления не может быть пустым")
     @Size(min = 5, max = 100, message = "Название должно быть от 5 до 100 символов")

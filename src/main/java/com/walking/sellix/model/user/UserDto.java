@@ -1,27 +1,31 @@
 package com.walking.sellix.model.user;
 
 import com.walking.sellix.entity.Role;
-import lombok.Value;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Value
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserDto {
-    Long id;
+    private Long id;
 
-    String username;
+    private String username;
 
-    String firstName;
+    private String firstName;
 
-    String lastName;
+    private String lastName;
 
-    String phoneNumber;
+    private String phoneNumber;
 
-    Role role;
+    private Role role;
 
-    boolean status;
+    private boolean status;
 
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
-    LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 }

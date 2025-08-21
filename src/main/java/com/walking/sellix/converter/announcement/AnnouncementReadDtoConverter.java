@@ -20,14 +20,15 @@ public class AnnouncementReadDtoConverter extends AbstractConverter<Announcement
 
     @Override
     public AnnouncementReadDto convert(Announcement source) {
-        return new AnnouncementReadDto(
-                source.getId(),
-                source.getTitle(),
-                source.getDescription(),
-                source.getPrice(),
-                source.getCity(),
-                source.getCreatedAt().format(FORMATTER),
-                source.getImages(),
-                userReadDtoConverter.convert(source.getUser()));
+        return AnnouncementReadDto.builder()
+                .id(source.getId())
+                .title(source.getTitle())
+                .description(source.getDescription())
+                .price(source.getPrice())
+                .city(source.getCity())
+                .createdAt(source.getCreatedAt().format(FORMATTER))
+                .images(source.getImages())
+                .salesman(userReadDtoConverter.convert(source.getUser()))
+                .build();
     }
 }
