@@ -17,6 +17,12 @@ spring:
         format_sql: true
         hbm2ddl.auto: validate
     open-in-view: false
+  session:
+    timeout: 30m
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 minio:
   endpoint: http://localhost:9000
