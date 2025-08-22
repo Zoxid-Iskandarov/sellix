@@ -130,17 +130,18 @@
                         <!-- Редактировать (только владелец) -->
                         <div th:if="${#authentication.principal.id == announcementDto.salesman.id}">
                             <a th:href="@{/announcements/{id}/edit(id=${announcementDto.id})}"
-                               class="btn btn-outline-primary w-100 mt-3">
-                                <i class="bi bi-pencil"></i> Редактировать
+                               class="btn btn-primary w-100 mt-3">
+                                <i class="bi bi-pencil text-white"></i> <span class="text-white">Редактировать</span>
                             </a>
                         </div>
 
+                        <!-- Удалить (владелец или админ) -->
                         <div th:if="${#authentication.principal.id == announcementDto.salesman.id or #authorization.expression('hasAuthority(''ADMIN'')')}">
                             <form th:action="@{/announcements/{id}(id=${announcementDto.id})}"
                                   th:method="delete" id="deleteForm">
                                 <button type="button" class="btn btn-danger w-100 mt-2 btn-delete"
                                         onclick="confirmDelete('deleteForm')">
-                                    <i class="bi bi-trash"></i> Удалить объявление
+                                    <i class="bi bi-trash text-white"></i> <span class="text-white">Удалить объявление</span>
                                 </button>
                             </form>
                         </div>
