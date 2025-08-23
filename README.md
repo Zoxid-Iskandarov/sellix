@@ -11,26 +11,60 @@
 ## 🛠 Технологии и зависимости
 
 **Backend:**
-- Java 21
-- Spring Boot 3
-- Spring Security
-- Spring Data WEB
-- Spring Data JPA
-- Spring Validation
-- Hibernate
-- Lombok
-- Thymeleaf
-- PostgreSQL
-- Liquibase
+- **Java 21**
+- **Spring Boot 3**
+- **Spring Security**
+- **Spring Data WEB**
+- **Spring Data JPA**
+- **Spring Validation**
+- **Hibernate**
+- **MinIO**
+- **Redis**
+- **PostgreSQL**
+- **Liquibase**
+- **Lombok**
+- **Thymeleaf**
 
 **Frontend:**
-- Bootstrap 5.3.0
-- Bootstrap Icons 1.10.0
-- jQuery (через WebJars)
+- **Bootstrap 5.3.0**
+- **Bootstrap Icons 1.10.0**
+- **jQuery (через WebJars)**
 
 **Тестирование:**
-- JUnit 5
-- Spring Boot Test
+- **JUnit 5**
+- **Spring Boot Test**
+
+---
+
+## 🚀 Запуск проекта
+
+### 📦 Требования
+
+- Установленный [Docker](https://www.docker.com/products/docker-desktop/)
+- Установленный [Git](https://git-scm.com/)
+- В составе `docker-compose.yml` автоматически поднимаются:
+    - PostgreSQL
+    - Redis (для хранения сессий)
+    - MinIO (для хранения изображений)
+
+### 🔧 Шаги
+
+1. Клонируйте репозиторий:
+   ```
+   git clone https://github.com/Zoxid-Iskandarov/sellix.git
+   cd sellix
+2. Запустите контейнеры:
+    ```
+    docker compose up -d
+    ```
+
+   ✅ Приложение будет доступно по адресу: http://localhost:8080/announcements
+
+
+3. Для остановки контейнеров:
+    ```
+    docker compose down
+   ```
 
 ---
 
@@ -118,6 +152,16 @@
   <img src="docs/screenshots/announcement-edit-page.png" width="700" alt="Редактирование объявления">
 </div>
 
+#### Удаление объявления
+- Удаление объявления доступно:
+    - владельцу объявления
+    - администратору
+- **Путь:** `DELETE /announcements/{id}`
+
+<div align="center">
+  <img src="docs/screenshots/announcement-info.png" width="700" alt="Редактирование объявления">
+</div>
+
 ---
 
 ### 🛠️ Администрирование
@@ -128,32 +172,4 @@
 <div align="center">
   <img src="docs/screenshots/admin-page.png" width="700" alt="Админ-панель">
 </div>
-
----
-
-## 🚀 Запуск проекта
-
-### 📦 Требования
-
-- Установленный [Docker](https://www.docker.com/products/docker-desktop/)
-- Установленный [Git](https://git-scm.com/)
-
-### 🔧 Шаги
-
-1. Клонируйте репозиторий:
-   ```
-   git clone https://github.com/Zoxid-Iskandarov/sellix.git
-   cd sellix
-2. Запустите контейнеры:
-    ```
-    docker compose up -d
-    ```
-
-    ✅ Приложение будет доступно по адресу: http://localhost:8080/announcements
-
-
-3. Для остановки контейнеров:
-    ```
-    docker compose down
-   ```
 
